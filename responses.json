@@ -1,0 +1,52 @@
+[
+  {
+    "id": "3485ce57-723c-46b3-9788-b76cc9027674",
+    "studentName": "Shivom Verma",
+    "branch": "Computer Science Engineering",
+    "semester": "3",
+    "collegeYear": "2nd year",
+    "email": "shivomv895@gmail.com",
+    "dob": "2009-02-16",
+    "rollNumber": "25036050026",
+    "ratings": {
+      "Classroom cleanliness": 5,
+      "Computer lab facilities": 5,
+      "Library resources": 5,
+      "Internet connectivity": 5,
+      "Drinking water and washrooms": 5,
+      "Canteen facilities": 5,
+      "Overall College Experience": 5,
+      "Overall satisfaction rating": 5,
+      "Academic support": 5,
+      "Campus environment": 5,
+      "Extracurricular activities": 5,
+      "Student-teacher interaction": 5
+    },
+    "submittedAt": "2026-10-15T15:17:55.706Z"
+  },
+  {
+    "id": "cb481c6c-e4ad-4773-b04a-e7fb98dfc868",
+    "studentName": "Shivom Verma",
+    "branch": "Computer Science Engineering",
+    "semester": "3",
+    "collegeYear": "2nd year",
+    "email": "shivomv895@gmail.com",
+    "dob": "2008-02-22",
+    "rollNumber": "25036050026",
+    "ratings": {
+      "Classroom cleanliness": 5,
+      "Computer lab facilities": 1,
+      "Library resources": 2,
+      "Internet connectivity": 4,
+      "Drinking water and washrooms": 4,
+      "Canteen facilities": 3,
+      "Overall College Experience": 5,
+      "Overall satisfaction rating": 5,
+      "Academic support": 5,
+      "Campus environment": 5,
+      "Extracurricular activities": 5,
+      "Student-teacher interaction": 5
+    },
+    "submittedAt": "2026-10-18T06:21:37.276Z"
+  }
+]

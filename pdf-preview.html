@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1456a0">
+  <title>Student Feedback Report · PDF Preview</title>
+  <style>
+    :root { color-scheme: light; --blue: #1456a0; --navy: #103f78; --ink: #18324e; --muted: #647890; --line: #d8e4f1; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 34px 18px 70px; background: radial-gradient(ellipse at top, #dcecff, #edf3fa 55%); color: var(--ink); font-family: "Segoe UI", Arial, sans-serif; }
+    .toolbar { width: min(100%, 920px); margin: 0 auto 18px; padding: 12px 15px 12px 19px; display: flex; align-items: center; justify-content: space-between; gap: 14px; border: 1px solid #dce8f5; border-radius: 12px; background: #ffffffd9; color: var(--muted); font-size: .9rem; box-shadow: 0 7px 24px #1747790d; }
+    .toolbar button { padding: 13px 20px; border: 0; border-radius: 9px; background: linear-gradient(120deg, #1456a0, #2674c8); color: white; font: inherit; font-weight: 700; cursor: pointer; box-shadow: 0 5px 16px #1456a033; transition: transform .16s, box-shadow .16s; }
+    .toolbar button:hover { transform: translateY(-1px); box-shadow: 0 8px 20px #1456a044; }
+    .report { width: min(100%, 920px); margin: auto; overflow: hidden; border: 1px solid #dce8f5; border-radius: 17px; background: white; box-shadow: 0 22px 65px #17477924; }
+    .report-header { position: relative; isolation: isolate; min-height: 205px; padding: 35px 42px; display: flex; align-items: center; gap: 22px; overflow: hidden; color: white; background: linear-gradient(118deg, #0c3262 0%, #1456a0 58%, #287ac9 100%); }
+    .report-header::before, .report-header::after { content: ""; position: absolute; z-index: -1; border: 1px solid #ffffff20; border-radius: 50%; }
+    .report-header::before { width: 330px; height: 330px; right: -70px; top: -190px; box-shadow: 0 0 0 24px #ffffff08, 0 0 0 50px #ffffff07; }
+    .report-header::after { width: 200px; height: 200px; right: 120px; bottom: -165px; background: #ffffff08; }
+    .logo { width: 91px; height: 91px; flex: 0 0 91px; padding: 5px; border: 3px solid #ffffffbb; border-radius: 50%; background: white; object-fit: contain; box-shadow: 0 5px 18px #061e403b; }
+    .eyebrow { display: inline-block; margin: 0 0 11px; padding: 6px 10px; border: 1px solid #ffffff38; border-radius: 30px; background: #ffffff13; color: #e3f1ff; font-size: .7rem; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(1.7rem, 4vw, 2.45rem); letter-spacing: -.025em; line-height: 1.12; }
+    .school { margin: 10px 0 0; color: #d8eaff; font-size: .95rem; }
+    .report-content { padding: 30px 42px 42px; }
+    .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin: -2px 0 31px; }
+    .stat { position: relative; min-height: 96px; padding: 17px 19px; overflow: hidden; border: 1px solid #dce8f5; border-radius: 12px; background: linear-gradient(145deg, #f8fbff, #eef6ff); }
+    .stat::after { content: ""; position: absolute; width: 64px; height: 64px; right: -22px; bottom: -31px; border: 10px solid #1456a00d; border-radius: 50%; }
+    .stat-label { margin: 0 0 9px; color: var(--muted); font-size: .68rem; font-weight: 750; letter-spacing: .1em; }
+    .stat-value { margin: 0; color: var(--navy); font-size: 1.45rem; font-weight: 800; }
+    .group { margin: 0 0 30px; break-inside: avoid; }
+    .group-title { margin: 0 0 13px; padding: 0 0 10px 12px; border-bottom: 2px solid #dbe9f8; border-left: 4px solid #e1b85b; color: var(--navy); font-size: 1.08rem; letter-spacing: -.01em; }
+    .entry { margin: 0 0 12px; padding: 16px 18px; border: 1px solid #dce6f1; border-left: 4px solid #4386d2; border-radius: 10px; background: linear-gradient(110deg, #fff, #fbfdff); break-inside: avoid; }
+    .entry-header { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .entry-header h3 { margin: 0; color: var(--ink); font-size: 1rem; font-weight: 750; }
+    .roll { padding: 6px 10px; border: 1px solid #d7e8fa; border-radius: 20px; background: #edf5ff; color: var(--blue); font-size: .76rem; font-weight: 750; white-space: nowrap; }
+    .details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; }
+    .detail-label { display: block; margin-bottom: 4px; color: #71849a; font-size: .68rem; font-weight: 750; letter-spacing: .07em; text-transform: uppercase; }
+    .detail-value { display: block; overflow-wrap: anywhere; font-size: .86rem; line-height: 1.45; }
+    .feedback { grid-column: 1 / -1; margin-top: 2px; padding: 10px 12px; border: 1px solid #e5edf6; border-radius: 8px; background: #f5f9fe; }
+    .rating-1 .detail-value { color: #d94a4a; } .rating-2 .detail-value { color: #ef7d32; } .rating-3 .detail-value { color: #d9a915; } .rating-4 .detail-value { color: #78a92e; } .rating-5 .detail-value { color: #168a58; }
+    .report-footer { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; padding-top: 13px; border-top: 1px solid var(--line); color: var(--muted); font-size: .72rem; }
+    .empty, .error { padding: 40px 20px; color: var(--muted); text-align: center; }
+    .error { color: #a8323c; }
+    @media (max-width: 600px) {
+      body { padding: 12px 10px 35px; }
+      .report-header { min-height: auto; padding: 25px 20px; align-items: flex-start; gap: 13px; }
+      .logo { width: 62px; height: 62px; flex-basis: 62px; }
+      .report-content { padding: 22px 18px 28px; }
+      .summary { grid-template-columns: 1fr; }
+      .details { grid-template-columns: 1fr; }
+      .feedback { grid-column: auto; }
+    }
+    @page { size: A4; margin: 14mm; }
+    @media print {
+      body { padding: 0; background: white; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .toolbar { display: none; }
+      .report { width: 100%; overflow: visible; border: 0; border-radius: 0; box-shadow: none; }
+      .report-header { min-height: 155px; padding: 22px 26px; }
+      .logo { width: 70px; height: 70px; flex-basis: 70px; }
+      .report-content { padding: 22px 4px; }
+      .summary { gap: 8px; margin-bottom: 23px; }
+      .stat { min-height: 76px; padding: 11px 13px; }
+      .stat-value { font-size: 1.2rem; }
+      .entry { padding: 11px 13px; }
+      .report-footer { margin-top: 18px; }
+      .group-title { break-after: avoid; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <span>PDF preview · Choose “Save as PDF” in the print window to download.</span>
+    <button id="downloadPdf" type="button">Download PDF</button>
+  </div>
+  <main class="report">
+    <header class="report-header">
+      <img class="logo" src="/Logo.jpg" alt="Government Polytechnic Garhi Shyampur college logo">
+      <div>
+        <p class="eyebrow">Uttarakhand Polytechnic College · Garhi Shyampur</p>
+        <h1>Student Feedback Report</h1>
+        <p class="school">Administrative report · <span id="reportDate"></span></p>
+      </div>
+    </header>
+    <div class="report-content">
+      <section class="summary" id="summary" aria-label="Report summary"></section>
+      <section id="reportGroups" aria-label="Feedback organized by branch and semester">
+        <p class="empty" id="loading">Loading feedback report…</p>
+      </section>
+      <footer class="report-footer"><span>Uttarakhand Polytechnic College · Garhi Shyampur</span><span>Student feedback · Administrative copy</span></footer>
+    </div>
+  </main>
+  <script>
+    const groupContainer = document.getElementById('reportGroups');
+    const summary = document.getElementById('summary');
+
+    function addStat(label, value) {
+      const card = document.createElement('div');
+      card.className = 'stat';
+      const caption = document.createElement('p');
+      caption.className = 'stat-label';
+      caption.textContent = label;
+      const number = document.createElement('p');
+      number.className = 'stat-value';
+      number.textContent = value;
+      card.append(caption, number);
+      summary.append(card);
+    }
+
+    function addDetail(container, label, value, className = '') {
+      const item = document.createElement('div');
+      if (className) item.className = className;
+      const caption = document.createElement('span');
+      caption.className = 'detail-label';
+      caption.textContent = label;
+      const text = document.createElement('span');
+      text.className = 'detail-value';
+      text.textContent = value || '—';
+      item.append(caption, text);
+      container.append(item);
+    }
+
+    function makeEntry(record) {
+      const article = document.createElement('article');
+      article.className = 'entry';
+      const heading = document.createElement('div');
+      heading.className = 'entry-header';
+      const name = document.createElement('h3');
+      name.textContent = record.studentName || 'Unnamed student';
+      const roll = document.createElement('span');
+      roll.className = 'roll';
+      roll.textContent = `Roll no. ${record.rollNumber || '—'}`;
+      heading.append(name, roll);
+      const details = document.createElement('div');
+      details.className = 'details';
+      addDetail(details, 'Email', record.email);
+      addDetail(details, 'Date of birth', record.dob);
+      const yearLabels = { '1': '1st year', '2': '2nd year', '3': '3rd year' };
+      addDetail(details, 'College year', yearLabels[String(record.collegeYear)] || record.collegeYear || '');
+      addDetail(details, 'Submitted', record.submittedAt ? new Date(record.submittedAt).toLocaleString() : '—');
+      if (record.ratings) {
+        Object.entries(record.ratings).forEach(([topic, rating]) => addDetail(details, topic, '★'.repeat(rating) + ' ' + rating + ' / 5', 'rating-' + rating));
+      } else if (record.feedback) addDetail(details, 'Previous feedback', record.feedback, 'feedback');
+      article.append(heading, details);
+      return article;
+    }
+
+    async function loadReport() {
+      try {
+        const response = await fetch('/api/responses');
+        const payload = await response.json();
+        if (response.status === 401) throw new Error('Admin sign in is required. Open this preview from the admin panel after signing in.');
+        if (!response.ok) throw new Error(payload.error || 'Could not load report.');
+        const records = payload.sort((a, b) =>
+          String(a.branch).localeCompare(String(b.branch)) ||
+          Number(a.semester) - Number(b.semester) ||
+          String(a.rollNumber).localeCompare(String(b.rollNumber))
+        );
+        document.getElementById('reportDate').textContent = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+        const branches = new Set(records.map((record) => record.branch));
+        const semesters = new Set(records.map((record) => `${record.branch}-${record.semester}`));
+        addStat('TOTAL RESPONSES', String(records.length));
+        addStat('BRANCHES', String(branches.size));
+        addStat('BRANCH / SEMESTER GROUPS', String(semesters.size));
+        groupContainer.replaceChildren();
+        if (!records.length) {
+          const empty = document.createElement('p');
+          empty.className = 'empty';
+          empty.textContent = 'No feedback responses are available.';
+          groupContainer.append(empty);
+          return;
+        }
+        const groups = new Map();
+        for (const record of records) {
+          const key = `${record.branch} · Semester ${record.semester}`;
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key).push(record);
+        }
+        for (const [title, groupRecords] of groups) {
+          const section = document.createElement('section');
+          section.className = 'group';
+          const heading = document.createElement('h2');
+          heading.className = 'group-title';
+          heading.textContent = `${title} · ${groupRecords.length} response${groupRecords.length === 1 ? '' : 's'}`;
+          section.append(heading, ...groupRecords.map(makeEntry));
+          groupContainer.append(section);
+        }
+      } catch (error) {
+        groupContainer.replaceChildren();
+        const message = document.createElement('p');
+        message.className = 'error';
+        message.textContent = error.message;
+        groupContainer.append(message);
+      }
+    }
+
+    document.getElementById('downloadPdf').addEventListener('click', () => window.print());
+    loadReport();
+  </script>
+</body>
+</html>
