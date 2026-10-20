@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#1456a0">
-  <title>Admin Responses | Uttarakhand Polytechnic College</title>
+  <title>Admin Responses | Government Polytechnic</title>
 
   <style>
     :root {
@@ -14,6 +14,7 @@
       --ink: #18324e;
       --muted: #647890;
       --line: #d8e4f1;
+      --red: #a8323c;
     }
 
     * { box-sizing: border-box; }
@@ -22,7 +23,7 @@
       margin: 0;
       min-height: 100vh;
       padding: 24px 14px;
-      background: #eef5ff url("/Background.jpeg") center/cover fixed;
+      background: #edf4fc;
       color: var(--ink);
       font-family: "Segoe UI", Arial, sans-serif;
     }
@@ -30,21 +31,21 @@
     main {
       width: min(100%, 1050px);
       margin: auto;
-      padding: 26px;
+      padding: 24px;
       border: 1px solid var(--line);
       border-radius: 16px;
-      background: #fff;
-      box-shadow: 0 15px 45px #1747791a;
+      background: white;
+      box-shadow: 0 12px 36px #17477912;
     }
 
     [hidden] { display: none !important; }
 
-    h1, h2, p { overflow-wrap: anywhere; }
-
     h1 { margin: 0; font-size: 1.6rem; }
+    h2 { font-size: 1.1rem; }
+    p { line-height: 1.5; }
 
     .login-panel {
-      max-width: 430px;
+      width: min(100%, 430px);
       margin: 6vh auto;
       padding: 28px;
     }
@@ -57,28 +58,26 @@
     }
 
     .logo {
-      width: 66px;
-      height: 66px;
-      flex: 0 0 66px;
-      padding: 4px;
-      border-radius: 50%;
+      width: 62px;
+      height: 62px;
       object-fit: contain;
+      border-radius: 50%;
       background: white;
-      box-shadow: 0 3px 12px #092d5830;
+      border: 1px solid var(--line);
     }
 
     .muted { color: var(--muted); }
 
     label {
       display: block;
-      margin: 15px 0 6px;
+      margin: 14px 0 6px;
       font-size: .9rem;
       font-weight: 650;
     }
 
     input, select {
       width: 100%;
-      min-height: 43px;
+      min-height: 42px;
       padding: 10px;
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -88,13 +87,13 @@
     }
 
     input:focus, select:focus {
-      outline: 3px solid #4386d225;
-      border-color: #4386d2;
+      outline: 2px solid #4386d255;
+      border-color: var(--blue);
     }
 
     button {
       min-height: 40px;
-      padding: 9px 14px;
+      padding: 9px 13px;
       border: 0;
       border-radius: 8px;
       background: var(--blue);
@@ -114,7 +113,7 @@
 
     .secondary:hover { background: #d6e7f8; }
 
-    .danger { background: #a8323c; }
+    .danger { background: var(--red); }
     .danger:hover { background: #852730; }
 
     .login-submit {
@@ -123,32 +122,33 @@
     }
 
     #loginMessage, #status {
-      min-height: 1.3em;
-      color: #a8323c;
+      min-height: 1.4em;
       overflow-wrap: anywhere;
+      color: var(--red);
     }
 
     header {
-      padding: 22px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
       border-radius: 12px;
       color: white;
       background: linear-gradient(120deg, var(--dark), #2674c8);
     }
 
-    header .brand { margin: 0; }
-    header p { margin: 7px 0 0; color: #e9f3ff; }
-    header .eyebrow {
-      font-size: .78rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
+    header .logo { flex-shrink: 0; }
+
+    header p {
+      margin: 6px 0 0;
+      color: #e9f3ff;
     }
 
     .toolbar {
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
       gap: 12px;
       margin: 20px 0 14px;
     }
@@ -159,68 +159,59 @@
       gap: 8px;
     }
 
+    #count { margin: 0; color: var(--muted); }
+
     .filters {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
-      margin-bottom: 18px;
     }
 
-    .filters label {
-      margin: 0;
-      color: var(--muted);
+    .filters label { color: var(--muted); }
+
+    #responses {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
     }
 
-    #responses { display: grid; gap: 15px; }
-
-    .group { display: grid; gap: 10px; }
+    .group {
+      display: grid;
+      gap: 10px;
+    }
 
     .group-title {
-      margin: 8px 0 0;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--line);
       color: var(--dark);
-      font-size: 1.05rem;
     }
 
     .response {
       padding: 16px;
       border: 1px solid var(--line);
-      border-radius: 11px;
+      border-radius: 10px;
+      break-inside: avoid;
     }
 
     .response-head {
       display: flex;
-      align-items: flex-start;
       justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
       gap: 12px;
       margin-bottom: 14px;
     }
 
-    .response h2 {
+    .response h3 {
       margin: 0;
       color: var(--dark);
-      font-size: 1.05rem;
     }
 
     .date {
       margin: 5px 0 0;
       color: var(--muted);
-      font-size: .83rem;
+      font-size: .85rem;
     }
-
-    .response-actions button {
-      min-height: 34px;
-      padding: 7px 10px;
-      font-size: .84rem;
-    }
-
-    .delete-one {
-      background: #fff0f0;
-      color: #8b2730;
-    }
-
-    .delete-one:hover { background: #ffe0e0; }
 
     dl {
       display: grid;
@@ -229,45 +220,58 @@
       margin: 0;
     }
 
+    dl div { min-width: 0; }
     dt { color: var(--muted); font-size: .8rem; }
     dd { margin: 4px 0 0; overflow-wrap: anywhere; }
-
     .feedback { grid-column: 1 / -1; }
-    .rating-1 dd { color: #d94a4a; }
-    .rating-2 dd { color: #ef7d32; }
-    .rating-3 dd { color: #bd9410; }
-    .rating-4 dd { color: #679b26; }
-    .rating-5 dd { color: #168a58; }
+
+    .rating-1 dd { color: #c53030; }
+    .rating-2 dd { color: #c05621; }
+    .rating-3 dd { color: #9a7800; }
+    .rating-4 dd { color: #55821d; }
+    .rating-5 dd { color: #16804b; }
 
     .empty {
-      padding: 28px 14px;
+      padding: 28px 12px;
       border: 1px dashed #b9cbe0;
       border-radius: 10px;
       color: var(--muted);
       text-align: center;
     }
 
+    .note {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
     @media (max-width: 650px) {
-      body { padding: 10px; }
-      main { padding: 14px; }
-      .login-panel { padding: 18px; }
+      main { padding: 15px; }
       .filters, dl { grid-template-columns: 1fr; }
       .feedback { grid-column: auto; }
-      .response-head { flex-direction: column; }
-      header { padding: 16px; }
-      .logo { width: 54px; height: 54px; flex-basis: 54px; }
+      header { align-items: flex-start; }
+      .logo { width: 50px; height: 50px; }
+    }
+
+    @media print {
+      body { padding: 0; background: white; }
+      main { width: 100%; padding: 0; border: 0; box-shadow: none; }
+      .toolbar, .filters, #status, .response-actions,
+      .note, #loginPanel { display: none !important; }
+      header { color: black; background: white; padding: 10px 0; }
+      header p { color: black; }
+      .response { border: 1px solid #bbb; }
     }
   </style>
 </head>
 
 <body>
 <main>
-  <!-- Login -->
   <section id="loginPanel" class="login-panel" hidden>
     <div class="brand">
       <img class="logo" src="/Logo.jpg"
            alt="College logo"
-           onerror="this.style.display='none'">
+           onerror="this.hidden=true">
       <div>
         <h1>Admin sign in</h1>
         <p class="muted">Uttarakhand Polytechnic College</p>
@@ -284,26 +288,21 @@
              type="password"
              autocomplete="current-password" required>
 
-      <button class="login-submit" id="loginButton" type="submit">
+      <button id="loginButton" class="login-submit" type="submit">
         Sign in
       </button>
-
       <p id="loginMessage" role="status" aria-live="polite"></p>
     </form>
   </section>
 
-  <!-- Dashboard -->
   <section id="adminContent" hidden>
     <header>
-      <div class="brand">
-        <img class="logo" src="/Logo.jpg"
-             alt="College logo"
-             onerror="this.style.display='none'">
-        <div>
-          <p class="eyebrow">Uttarakhand Polytechnic College · Garhi Shyampur</p>
-          <h1>Admin · Student Feedback</h1>
-          <p>View and manage submitted feedback.</p>
-        </div>
+      <img class="logo" src="/Logo.jpg"
+           alt="College logo"
+           onerror="this.hidden=true">
+      <div>
+        <h1>Admin — Student Feedback</h1>
+        <p>Government Polytechnic, Garhi Shyampur</p>
       </div>
     </header>
 
@@ -312,23 +311,25 @@
       <div class="actions">
         <button class="secondary" id="refresh" type="button">Refresh</button>
         <button class="secondary" id="export" type="button">Export CSV</button>
-        <button class="secondary" id="exportPdf" type="button">Export PDF</button>
+        <button class="secondary" id="exportPdf" type="button">Print / Save PDF</button>
         <button class="danger" id="deleteAll" type="button">Delete all</button>
         <button class="secondary" id="logout" type="button">Log out</button>
       </div>
     </div>
 
     <div class="filters">
-      <label for="branchFilter">Branch
+      <div>
+        <label for="branchFilter">Branch</label>
         <select id="branchFilter">
           <option value="">All branches</option>
           <option>Computer Science Engineering</option>
           <option>Civil Engineering</option>
           <option>Electrical Engineering</option>
         </select>
-      </label>
+      </div>
 
-      <label for="semesterFilter">Semester
+      <div>
+        <label for="semesterFilter">Semester</label>
         <select id="semesterFilter">
           <option value="">All semesters</option>
           <option value="1">Semester 1</option>
@@ -338,77 +339,78 @@
           <option value="5">Semester 5</option>
           <option value="6">Semester 6</option>
         </select>
-      </label>
+      </div>
 
-      <label for="rollFilter">Search roll number
+      <div>
+        <label for="rollFilter">Search roll number</label>
         <input id="rollFilter" type="search"
                placeholder="Enter roll number">
-      </label>
+      </div>
     </div>
 
     <p id="status" role="status" aria-live="polite"></p>
     <section id="responses" aria-label="Feedback responses"></section>
+    <p class="note">
+      Keep student feedback private. Only authorized administrators should
+      access, export, or delete responses.
+    </p>
   </section>
 </main>
 
 <script>
-  'use strict';
-
-  // IMPORTANT: All API calls go to Render, never to Netlify.
-  const API_BASE = 'https://college-project-wdh5.onrender.com';
+  // All API requests go to Render, never to Netlify's /api path.
+  const API_BASE = "https://college-project-wdh5.onrender.com";
 
   const $ = (id) => document.getElementById(id);
-
-  const loginPanel = $('loginPanel');
-  const adminContent = $('adminContent');
-  const loginForm = $('loginForm');
-  const loginMessage = $('loginMessage');
-  const loginButton = $('loginButton');
-  const statusMessage = $('status');
-  const count = $('count');
-  const list = $('responses');
-  const branchFilter = $('branchFilter');
-  const semesterFilter = $('semesterFilter');
-  const rollFilter = $('rollFilter');
+  const loginPanel = $("loginPanel");
+  const adminContent = $("adminContent");
+  const loginForm = $("loginForm");
+  const loginMessage = $("loginMessage");
+  const loginButton = $("loginButton");
+  const list = $("responses");
+  const count = $("count");
+  const statusMessage = $("status");
+  const branchFilter = $("branchFilter");
+  const semesterFilter = $("semesterFilter");
+  const rollFilter = $("rollFilter");
 
   let records = [];
+  let busy = false;
 
-  // Handles JSON and HTML responses without hiding the real error.
   async function api(path, options = {}) {
-    const url = `${API_BASE}${path}`;
-
-    const response = await fetch(url, {
+    const response = await fetch(`${API_BASE}${path}`, {
       ...options,
-      credentials: 'include',
+      credentials: "include",
       headers: {
-        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+        ...(options.body ? { "Content-Type": "application/json" } : {}),
         ...options.headers
       }
     });
 
+    // Handle empty bodies and non-JSON server errors safely.
     const text = await response.text();
-    let payload;
+    let payload = {};
 
-    try {
-      payload = text ? JSON.parse(text) : {};
-    } catch {
-      throw new Error(
-        `The backend returned HTML or invalid JSON (${response.status}) ` +
-        `for ${path}. Check the Render route and deployment.`
-      );
+    if (text.trim()) {
+      try {
+        payload = JSON.parse(text);
+      } catch {
+        throw new Error(
+          `Server returned a non-JSON response (HTTP ${response.status}).`
+        );
+      }
     }
 
     if (!response.ok) {
       throw new Error(
-        payload.error || payload.message ||
-        `Request failed with HTTP ${response.status}.`
+        payload.error || payload.message || `Request failed (HTTP ${response.status}).`
       );
     }
 
     return payload;
   }
 
-  function showLogin(message = '') {
+  function showLogin(message = "") {
     loginPanel.hidden = false;
     adminContent.hidden = true;
     loginMessage.textContent = message;
@@ -420,18 +422,16 @@
     loadResponses();
   }
 
-  function addDetail(container, label, value, className = '') {
-    const wrapper = document.createElement('div');
+  function addDetail(container, label, value, className = "") {
+    const wrapper = document.createElement("div");
     if (className) wrapper.className = className;
 
-    const term = document.createElement('dt');
+    const term = document.createElement("dt");
     term.textContent = label;
 
-    const description = document.createElement('dd');
+    const description = document.createElement("dd");
     description.textContent =
-      value === undefined || value === null || value === ''
-        ? '—'
-        : String(value);
+      value === null || value === undefined || value === "" ? "—" : String(value);
 
     wrapper.append(term, description);
     container.append(wrapper);
@@ -444,28 +444,25 @@
     const semester = semesterFilter.value;
     const roll = rollFilter.value.trim().toLowerCase();
 
-    const filtered = records.filter(record =>
+    const filtered = records.filter((record) =>
       (!branch || record.branch === branch) &&
       (!semester || String(record.semester) === semester) &&
-      (!roll || String(record.rollNumber ?? '').toLowerCase().includes(roll))
-    );
-
-    filtered.sort((a, b) =>
-      String(a.branch || '').localeCompare(String(b.branch || '')) ||
+      (!roll || String(record.rollNumber || "").toLowerCase().includes(roll))
+    ).sort((a, b) =>
+      String(a.branch || "").localeCompare(String(b.branch || "")) ||
       Number(a.semester || 0) - Number(b.semester || 0) ||
-      String(a.rollNumber || '').localeCompare(String(b.rollNumber || ''))
+      String(a.rollNumber || "").localeCompare(String(b.rollNumber || ""))
     );
 
     count.textContent =
-      `${filtered.length} of ${records.length} response` +
-      `${records.length === 1 ? '' : 's'}`;
+      `${filtered.length} of ${records.length} response${records.length === 1 ? "" : "s"}`;
 
     if (!filtered.length) {
-      const empty = document.createElement('div');
-      empty.className = 'empty';
+      const empty = document.createElement("div");
+      empty.className = "empty";
       empty.textContent = records.length
-        ? 'No responses match these filters.'
-        : 'No feedback has been submitted yet.';
+        ? "No responses match these filters."
+        : "No feedback has been submitted yet.";
       list.append(empty);
       return;
     }
@@ -473,109 +470,105 @@
     const groups = new Map();
 
     for (const record of filtered) {
-      const key = `${record.branch || 'Unspecified branch'} · Semester ${record.semester || '—'}`;
+      const key = `${record.branch || "Unknown branch"} · Semester ${record.semester || "—"}`;
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(record);
     }
 
     for (const [groupName, groupRecords] of groups) {
-      const group = document.createElement('section');
-      group.className = 'group';
+      const group = document.createElement("section");
+      group.className = "group";
 
-      const title = document.createElement('h2');
-      title.className = 'group-title';
-      title.textContent =
-        `${groupName} · ${groupRecords.length} response` +
-        `${groupRecords.length === 1 ? '' : 's'}`;
-
+      const title = document.createElement("h2");
+      title.className = "group-title";
+      title.textContent = `${groupName} · ${groupRecords.length} response${groupRecords.length === 1 ? "" : "s"}`;
       group.append(title);
 
       for (const record of groupRecords) {
-        const article = document.createElement('article');
-        article.className = 'response';
+        const article = document.createElement("article");
+        article.className = "response";
 
-        const heading = document.createElement('div');
-        heading.className = 'response-head';
+        const heading = document.createElement("div");
+        heading.className = "response-head";
 
-        const student = document.createElement('div');
-        const name = document.createElement('h2');
-        name.textContent = record.studentName || 'Unnamed student';
+        const student = document.createElement("div");
+        const name = document.createElement("h3");
+        name.textContent = record.studentName || "Unnamed student";
 
-        const date = document.createElement('p');
-        date.className = 'date';
+        const date = document.createElement("p");
+        date.className = "date";
         date.textContent = record.submittedAt
           ? new Date(record.submittedAt).toLocaleString()
-          : 'Submission time unavailable';
+          : "Submission time unavailable";
 
         student.append(name, date);
 
-        const actions = document.createElement('div');
-        actions.className = 'response-actions';
+        const actions = document.createElement("div");
+        actions.className = "response-actions";
 
-        const printButton = document.createElement('button');
-        printButton.type = 'button';
-        printButton.className = 'print-one';
-        printButton.textContent = 'Print response';
-
-        printButton.addEventListener('click', () => {
-          const url = `${API_BASE}/remark-preview?id=${encodeURIComponent(record.id)}`;
-          window.open(url, '_blank', 'noopener');
+        const printButton = document.createElement("button");
+        printButton.type = "button";
+        printButton.className = "secondary";
+        printButton.textContent = "Print response";
+        printButton.addEventListener("click", () => {
+          window.print();
         });
 
-        const removeButton = document.createElement('button');
-        removeButton.type = 'button';
-        removeButton.className = 'delete-one';
-        removeButton.textContent = 'Delete';
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "danger";
+        removeButton.textContent = "Delete";
 
-        removeButton.addEventListener('click', async () => {
-          if (!confirm('Delete this feedback response?')) return;
+        removeButton.addEventListener("click", async () => {
+          if (!record.id) {
+            statusMessage.textContent = "This response has no ID; it cannot be deleted individually.";
+            return;
+          }
 
-          removeButton.disabled = true;
+          if (!confirm(`Permanently delete the response from ${record.studentName || "this student"}?`)) {
+            return;
+          }
 
           try {
             await api(`/api/responses/${encodeURIComponent(record.id)}`, {
-              method: 'DELETE'
+              method: "DELETE"
             });
             await loadResponses();
-            statusMessage.textContent = 'Response deleted.';
+            statusMessage.textContent = "Response deleted.";
           } catch (error) {
             statusMessage.textContent = error.message;
-          } finally {
-            removeButton.disabled = false;
           }
         });
 
         actions.append(printButton, removeButton);
         heading.append(student, actions);
 
-        const details = document.createElement('dl');
+        const details = document.createElement("dl");
+        addDetail(details, "Branch", record.branch);
+        addDetail(details, "Semester", record.semester);
+        const years = { "1": "1st year", "2": "2nd year", "3": "3rd year" };
+        addDetail(details, "College year", years[String(record.collegeYear)] || record.collegeYear);
+        addDetail(details, "Email", record.email);
+        addDetail(details, "Date of birth", record.dob);
+        addDetail(details, "Roll number", record.rollNumber);
 
-        addDetail(details, 'Branch', record.branch);
-        addDetail(details, 'Semester', record.semester);
-        addDetail(details, 'College year', record.collegeYear);
-        addDetail(details, 'Email', record.email);
-        addDetail(details, 'Date of birth', record.dob);
-        addDetail(details, 'Roll number', record.rollNumber);
-
-        if (record.ratings && typeof record.ratings === 'object') {
+        if (record.ratings && typeof record.ratings === "object") {
           for (const [topic, rating] of Object.entries(record.ratings)) {
             const numericRating = Number(rating);
-            const display = Number.isFinite(numericRating) &&
-              numericRating >= 1 && numericRating <= 5
-                ? `${'★'.repeat(numericRating)} ${numericRating} / 5`
-                : String(rating);
-
+            const safeRating = Number.isFinite(numericRating)
+              ? Math.max(0, Math.min(5, Math.round(numericRating)))
+              : 0;
             addDetail(
               details,
               topic,
-              display,
-              `rating-${numericRating}`
+              `${"★".repeat(safeRating)} ${rating} / 5`,
+              `rating-${safeRating}`
             );
           }
         }
 
         if (record.feedback) {
-          addDetail(details, 'Previous feedback', record.feedback, 'feedback');
+          addDetail(details, "Previous feedback", record.feedback, "feedback");
         }
 
         article.append(heading, details);
@@ -587,49 +580,50 @@
   }
 
   async function loadResponses() {
-    statusMessage.textContent = '';
+    statusMessage.textContent = "";
+    count.textContent = "Loading responses…";
 
     try {
-      const data = await api('/api/responses');
+      const data = await api("/api/responses");
 
       if (!Array.isArray(data)) {
-        throw new Error(
-          'The responses endpoint did not return an array. Check server.js.'
-        );
+        throw new Error("Unexpected response format: expected a list of feedback responses.");
       }
 
-      records = data;
-      records.sort((a, b) =>
+      records = data.sort((a, b) =>
         new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0)
       );
 
       render();
     } catch (error) {
-      count.textContent = 'Could not load responses';
-      statusMessage.textContent = error.message;
+      count.textContent = "Could not load responses";
 
-      if (/unauthorized|sign in|not authenticated|forbidden/i.test(error.message)) {
-        showLogin('Please sign in again to view feedback.');
+      if (/401|403|sign in|unauthor/i.test(error.message)) {
+        showLogin("Your session may have expired. Please sign in again.");
+      } else {
+        statusMessage.textContent =
+          `${error.message} Check that the Render backend is running and its routes are correct.`;
       }
     }
   }
 
-  loginForm.addEventListener('submit', async event => {
+  loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (busy) return;
 
-    loginMessage.textContent = '';
+    busy = true;
     loginButton.disabled = true;
-    loginButton.textContent = 'Signing in…';
-
-    const credentials = {
-      username: loginForm.elements.username.value,
-      password: loginForm.elements.password.value
-    };
+    loginButton.textContent = "Signing in…";
+    loginMessage.textContent = "";
 
     try {
-      // This URL resolves to Render, not Netlify.
-      await api('/api/auth/login', {
-        method: 'POST',
+      const credentials = {
+        username: loginForm.elements.username.value.trim(),
+        password: loginForm.elements.password.value
+      };
+
+      await api("/api/auth/login", {
+        method: "POST",
         body: JSON.stringify(credentials)
       });
 
@@ -638,74 +632,50 @@
     } catch (error) {
       loginMessage.textContent = error.message;
     } finally {
+      busy = false;
       loginButton.disabled = false;
-      loginButton.textContent = 'Sign in';
+      loginButton.textContent = "Sign in";
     }
   });
 
-  $('logout').addEventListener('click', async () => {
+  $("refresh").addEventListener("click", loadResponses);
+
+  $("logout").addEventListener("click", async () => {
     try {
-      await api('/api/auth/logout', { method: 'POST' });
+      await api("/api/auth/logout", { method: "POST" });
       records = [];
-      showLogin('You are signed out.');
+      list.replaceChildren();
+      showLogin("You are signed out.");
     } catch (error) {
       statusMessage.textContent = error.message;
     }
   });
 
-  $('refresh').addEventListener('click', loadResponses);
-
-  branchFilter.addEventListener('change', render);
-  semesterFilter.addEventListener('change', render);
-  rollFilter.addEventListener('input', render);
-
-  $('deleteAll').addEventListener('click', async () => {
+  $("exportPdf").addEventListener("click", () => {
     if (!records.length) {
-      statusMessage.textContent = 'There are no responses to delete.';
+      statusMessage.textContent = "There are no responses to print.";
       return;
     }
-
-    if (!confirm('Permanently delete ALL saved feedback? This cannot be undone.')) {
-      return;
-    }
-
-    try {
-      await api('/api/responses', { method: 'DELETE' });
-      await loadResponses();
-      statusMessage.textContent = 'All responses deleted.';
-    } catch (error) {
-      statusMessage.textContent = error.message;
-    }
+    window.print();
   });
 
-  $('export').addEventListener('click', () => {
+  $("export").addEventListener("click", () => {
     if (!records.length) {
-      statusMessage.textContent = 'There are no responses to export.';
+      statusMessage.textContent = "There are no responses to export.";
       return;
     }
 
-    const topics = [
-      'Classroom cleanliness',
-      'Computer lab facilities',
-      'Library resources',
-      'Internet connectivity',
-      'Drinking water and washrooms',
-      'Canteen facilities',
-      'Overall College Experience',
-      'Overall satisfaction rating',
-      'Academic support',
-      'Campus environment',
-      'Extracurricular activities',
-      'Student-teacher interaction'
-    ];
+    const topics = [...new Set(records.flatMap((record) =>
+      Object.keys(record.ratings || {})
+    ))];
 
     const columns = [
-      'Student name', 'Branch', 'Semester', 'College year',
-      'Email', 'Date of birth', 'Roll number',
-      ...topics, 'Previous feedback', 'Submitted at'
+      "Student name", "Branch", "Semester", "College year",
+      "Email", "Date of birth", "Roll number",
+      ...topics, "Previous feedback", "Submitted at"
     ];
 
-    const rows = records.map(record => [
+    const rows = records.map((record) => [
       record.studentName,
       record.branch,
       record.semester,
@@ -713,53 +683,69 @@
       record.email,
       record.dob,
       record.rollNumber,
-      ...topics.map(topic => record.ratings?.[topic] ?? ''),
-      record.feedback || '',
-      record.submittedAt || ''
+      ...topics.map((topic) => record.ratings?.[topic] ?? ""),
+      record.feedback || "",
+      record.submittedAt || ""
     ]);
 
-    const csvCell = value =>
-      `"${String(value ?? '').replace(/"/g, '""')}"`;
+    const cell = (value) =>
+      `"${String(value ?? "").replace(/"/g, '""')}"`;
 
     const csv = [columns, ...rows]
-      .map(row => row.map(csvCell).join(','))
-      .join('\r\n');
+      .map((row) => row.map(cell).join(","))
+      .join("\r\n");
 
     const url = URL.createObjectURL(
-      new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+      new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" })
     );
 
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = 'student-feedback.csv';
+    link.download = "student-feedback.csv";
     document.body.append(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
-  $('exportPdf').addEventListener('click', () => {
+  branchFilter.addEventListener("change", render);
+  semesterFilter.addEventListener("change", render);
+  rollFilter.addEventListener("input", render);
+
+  $("deleteAll").addEventListener("click", async () => {
     if (!records.length) {
-      statusMessage.textContent = 'There are no responses to export.';
+      statusMessage.textContent = "There are no responses to delete.";
       return;
     }
 
-    window.open(`${API_BASE}/pdf-preview`, '_blank', 'noopener');
+    if (!confirm("Permanently delete ALL feedback responses? This cannot be undone.")) {
+      return;
+    }
+
+    const confirmation = prompt('Type DELETE to confirm removing all feedback:');
+    if (confirmation !== "DELETE") {
+      statusMessage.textContent = "Bulk deletion cancelled.";
+      return;
+    }
+
+    try {
+      await api("/api/responses", { method: "DELETE" });
+      await loadResponses();
+      statusMessage.textContent = "All feedback responses have been deleted.";
+    } catch (error) {
+      statusMessage.textContent = error.message;
+    }
   });
 
-  // Initial session check. This also contacts Render directly.
+  // Check whether an admin session already exists.
   (async function initialize() {
     try {
-      const session = await api('/api/auth');
-
-      if (session.authenticated) {
-        showAdmin();
-      } else {
-        showLogin();
-      }
+      const session = await api("/api/auth");
+      if (session.authenticated) showAdmin();
+      else showLogin();
     } catch (error) {
       showLogin(
-        `Cannot connect to the backend correctly: ${error.message}`
+        `Cannot reach the backend: ${error.message} Check your Render deployment and CORS settings.`
       );
     }
   })();
