@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#1456a0">
-  <title>Admin Responses | Government Polytechnic</title>
+  <title>Admin Dashboard | College Feedback</title>
 
   <style>
     :root {
@@ -14,40 +14,40 @@
       --ink: #18324e;
       --muted: #647890;
       --line: #d8e4f1;
-      --red: #a8323c;
+      --bg: #f1f6fc;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      min-height: 100vh;
       padding: 24px 14px;
-      background: #edf4fc;
+      min-height: 100vh;
+      background: var(--bg);
       color: var(--ink);
       font-family: "Segoe UI", Arial, sans-serif;
     }
 
     main {
-      width: min(100%, 1050px);
+      max-width: 1100px;
       margin: auto;
       padding: 24px;
+      background: white;
       border: 1px solid var(--line);
       border-radius: 16px;
-      background: white;
-      box-shadow: 0 12px 36px #17477912;
+      box-shadow: 0 12px 40px #163b6410;
     }
 
     [hidden] { display: none !important; }
 
-    h1 { margin: 0; font-size: 1.6rem; }
-    h2 { font-size: 1.1rem; }
-    p { line-height: 1.5; }
+    h1, h2, p { overflow-wrap: anywhere; }
 
-    .login-panel {
-      width: min(100%, 430px);
-      margin: 6vh auto;
-      padding: 28px;
+    h1 { margin: 0; font-size: 1.7rem; }
+    h2 { font-size: 1.05rem; }
+
+    .login {
+      max-width: 430px;
+      margin: 7vh auto;
     }
 
     .brand {
@@ -58,36 +58,38 @@
     }
 
     .logo {
-      width: 62px;
-      height: 62px;
+      width: 64px;
+      height: 64px;
       object-fit: contain;
       border-radius: 50%;
       background: white;
-      border: 1px solid var(--line);
     }
 
-    .muted { color: var(--muted); }
+    .subtitle {
+      color: var(--muted);
+      margin: 6px 0 0;
+    }
 
     label {
       display: block;
-      margin: 14px 0 6px;
+      margin: 16px 0 6px;
+      font-weight: 600;
       font-size: .9rem;
-      font-weight: 650;
     }
 
     input, select {
       width: 100%;
-      min-height: 42px;
+      min-height: 43px;
       padding: 10px;
       border: 1px solid var(--line);
       border-radius: 8px;
+      font: inherit;
       background: white;
       color: var(--ink);
-      font: inherit;
     }
 
     input:focus, select:focus {
-      outline: 2px solid #4386d255;
+      outline: 2px solid #1456a044;
       border-color: var(--blue);
     }
 
@@ -99,12 +101,14 @@
       background: var(--blue);
       color: white;
       font: inherit;
-      font-weight: 650;
+      font-weight: 600;
       cursor: pointer;
     }
 
     button:hover { background: var(--dark); }
     button:disabled { opacity: .6; cursor: wait; }
+
+    .full { width: 100%; margin-top: 20px; }
 
     .secondary {
       background: #e8f1fb;
@@ -113,44 +117,16 @@
 
     .secondary:hover { background: #d6e7f8; }
 
-    .danger { background: var(--red); }
+    .danger { background: #a8323c; }
     .danger:hover { background: #852730; }
-
-    .login-submit {
-      width: 100%;
-      margin-top: 20px;
-    }
-
-    #loginMessage, #status {
-      min-height: 1.4em;
-      overflow-wrap: anywhere;
-      color: var(--red);
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      padding: 20px;
-      border-radius: 12px;
-      color: white;
-      background: linear-gradient(120deg, var(--dark), #2674c8);
-    }
-
-    header .logo { flex-shrink: 0; }
-
-    header p {
-      margin: 6px 0 0;
-      color: #e9f3ff;
-    }
 
     .toolbar {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
       flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
       gap: 12px;
-      margin: 20px 0 14px;
+      margin: 24px 0 16px;
     }
 
     .actions, .response-actions {
@@ -159,80 +135,75 @@
       gap: 8px;
     }
 
-    #count { margin: 0; color: var(--muted); }
-
     .filters {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
+      margin-bottom: 18px;
     }
 
-    .filters label { color: var(--muted); }
+    .filters label { margin: 0; }
 
-    #responses {
-      display: grid;
-      gap: 14px;
-      margin-top: 18px;
+    #status, #loginMessage {
+      min-height: 1.4em;
+      color: #a8323c;
+      overflow-wrap: anywhere;
     }
 
-    .group {
-      display: grid;
-      gap: 10px;
-    }
+    #count { color: var(--muted); }
+
+    .group { margin-top: 22px; }
 
     .group-title {
-      padding-bottom: 8px;
+      padding-bottom: 10px;
       border-bottom: 1px solid var(--line);
       color: var(--dark);
     }
 
     .response {
-      padding: 16px;
+      margin: 12px 0;
+      padding: 17px;
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 11px;
       break-inside: avoid;
     }
 
     .response-head {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: flex-start;
-      flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 14px;
+      margin-bottom: 15px;
     }
 
-    .response h3 {
-      margin: 0;
-      color: var(--dark);
-    }
+    .response-head h2 { margin: 0; color: var(--dark); }
 
     .date {
       margin: 5px 0 0;
       color: var(--muted);
-      font-size: .85rem;
+      font-size: .83rem;
+    }
+
+    .response-actions button {
+      min-height: 34px;
+      padding: 7px 10px;
+      font-size: .84rem;
     }
 
     dl {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px 18px;
+      gap: 13px 18px;
       margin: 0;
     }
 
-    dl div { min-width: 0; }
     dt { color: var(--muted); font-size: .8rem; }
     dd { margin: 4px 0 0; overflow-wrap: anywhere; }
-    .feedback { grid-column: 1 / -1; }
-
-    .rating-1 dd { color: #c53030; }
-    .rating-2 dd { color: #c05621; }
-    .rating-3 dd { color: #9a7800; }
-    .rating-4 dd { color: #55821d; }
-    .rating-5 dd { color: #16804b; }
+    .wide { grid-column: 1 / -1; }
 
     .empty {
-      padding: 28px 12px;
+      padding: 28px 14px;
       border: 1px dashed #b9cbe0;
       border-radius: 10px;
       color: var(--muted);
@@ -240,41 +211,38 @@
     }
 
     .note {
-      margin-top: 22px;
+      margin-top: 24px;
       color: var(--muted);
       font-size: .82rem;
     }
 
     @media (max-width: 650px) {
-      main { padding: 15px; }
+      main { padding: 16px; }
       .filters, dl { grid-template-columns: 1fr; }
-      .feedback { grid-column: auto; }
-      header { align-items: flex-start; }
-      .logo { width: 50px; height: 50px; }
+      .wide { grid-column: auto; }
+      .toolbar { align-items: flex-start; }
+      h1 { font-size: 1.35rem; }
     }
 
     @media print {
       body { padding: 0; background: white; }
-      main { width: 100%; padding: 0; border: 0; box-shadow: none; }
-      .toolbar, .filters, #status, .response-actions,
-      .note, #loginPanel { display: none !important; }
-      header { color: black; background: white; padding: 10px 0; }
-      header p { color: black; }
-      .response { border: 1px solid #bbb; }
+      main { max-width: none; padding: 0; border: 0; box-shadow: none; }
+      .no-print, #status, #loginPanel { display: none !important; }
+      .response { border: 1px solid #aaa; }
     }
   </style>
 </head>
 
 <body>
 <main>
-  <section id="loginPanel" class="login-panel" hidden>
+
+  <!-- ADMIN LOGIN -->
+  <section id="loginPanel" class="login" hidden>
     <div class="brand">
-      <img class="logo" src="/Logo.jpg"
-           alt="College logo"
-           onerror="this.hidden=true">
+      <img class="logo" src="/Logo.jpg" alt="College logo">
       <div>
-        <h1>Admin sign in</h1>
-        <p class="muted">Uttarakhand Polytechnic College</p>
+        <h1>Admin Sign In</h1>
+        <p class="subtitle">College Feedback System</p>
       </div>
     </div>
 
@@ -288,48 +256,51 @@
              type="password"
              autocomplete="current-password" required>
 
-      <button id="loginButton" class="login-submit" type="submit">
-        Sign in
+      <button id="loginButton" class="full" type="submit">
+        Sign In
       </button>
+
       <p id="loginMessage" role="status" aria-live="polite"></p>
     </form>
   </section>
 
+  <!-- ADMIN DASHBOARD -->
   <section id="adminContent" hidden>
-    <header>
-      <img class="logo" src="/Logo.jpg"
-           alt="College logo"
-           onerror="this.hidden=true">
+    <header class="brand">
+      <img class="logo" src="/Logo.jpg" alt="College logo">
       <div>
-        <h1>Admin — Student Feedback</h1>
-        <p>Government Polytechnic, Garhi Shyampur</p>
+        <h1>Student Feedback Dashboard</h1>
+        <p class="subtitle">
+          Uttarakhand Polytechnic College · Garhi Shyampur
+        </p>
       </div>
     </header>
 
-    <div class="toolbar">
-      <p id="count" aria-live="polite">Loading responses…</p>
+    <div class="toolbar no-print">
+      <p id="count">Loading feedback...</p>
+
       <div class="actions">
-        <button class="secondary" id="refresh" type="button">Refresh</button>
-        <button class="secondary" id="export" type="button">Export CSV</button>
-        <button class="secondary" id="exportPdf" type="button">Print / Save PDF</button>
-        <button class="danger" id="deleteAll" type="button">Delete all</button>
-        <button class="secondary" id="logout" type="button">Log out</button>
+        <button id="refresh" class="secondary">Refresh</button>
+        <button id="exportCsv" class="secondary">Export CSV</button>
+        <button id="printAll" class="secondary">Print / Save PDF</button>
+        <button id="deleteAll" class="danger">Delete All</button>
+        <button id="logout" class="secondary">Log Out</button>
       </div>
     </div>
 
-    <div class="filters">
-      <div>
-        <label for="branchFilter">Branch</label>
+    <div class="filters no-print">
+      <label for="branchFilter">
+        Branch
         <select id="branchFilter">
           <option value="">All branches</option>
           <option>Computer Science Engineering</option>
           <option>Civil Engineering</option>
           <option>Electrical Engineering</option>
         </select>
-      </div>
+      </label>
 
-      <div>
-        <label for="semesterFilter">Semester</label>
+      <label for="semesterFilter">
+        Semester
         <select id="semesterFilter">
           <option value="">All semesters</option>
           <option value="1">Semester 1</option>
@@ -339,416 +310,482 @@
           <option value="5">Semester 5</option>
           <option value="6">Semester 6</option>
         </select>
-      </div>
+      </label>
 
-      <div>
-        <label for="rollFilter">Search roll number</label>
+      <label for="rollFilter">
+        Roll Number
         <input id="rollFilter" type="search"
-               placeholder="Enter roll number">
-      </div>
+               placeholder="Search roll number">
+      </label>
     </div>
 
     <p id="status" role="status" aria-live="polite"></p>
     <section id="responses" aria-label="Feedback responses"></section>
-    <p class="note">
-      Keep student feedback private. Only authorized administrators should
-      access, export, or delete responses.
+
+    <p class="note no-print">
+      Keep student information confidential. Only authorized staff should
+      access, export, or delete feedback records.
     </p>
   </section>
+
 </main>
 
 <script>
-  // All API requests go to Render, never to Netlify's /api path.
-  const API_BASE = "https://college-project-wdh5.onrender.com";
+"use strict";
 
-  const $ = (id) => document.getElementById(id);
-  const loginPanel = $("loginPanel");
-  const adminContent = $("adminContent");
-  const loginForm = $("loginForm");
-  const loginMessage = $("loginMessage");
-  const loginButton = $("loginButton");
-  const list = $("responses");
-  const count = $("count");
-  const statusMessage = $("status");
-  const branchFilter = $("branchFilter");
-  const semesterFilter = $("semesterFilter");
-  const rollFilter = $("rollFilter");
+/*
+ * IMPORTANT:
+ * All API calls go directly to Render, never to Netlify.
+ */
+const API_BASE = "https://college-project-wdh5.onrender.com";
 
-  let records = [];
-  let busy = false;
+const $ = (id) => document.getElementById(id);
 
-  async function api(path, options = {}) {
-    const response = await fetch(`${API_BASE}${path}`, {
+const loginPanel = $("loginPanel");
+const adminContent = $("adminContent");
+const loginForm = $("loginForm");
+const loginMessage = $("loginMessage");
+const statusMessage = $("status");
+const count = $("count");
+const responseList = $("responses");
+
+const branchFilter = $("branchFilter");
+const semesterFilter = $("semesterFilter");
+const rollFilter = $("rollFilter");
+
+let records = [];
+let busy = false;
+
+/*
+ * Read response text first.
+ * This prevents empty responses from causing JSON parse errors.
+ */
+async function api(path, options = {}) {
+  let response;
+
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
       ...options,
       credentials: "include",
       headers: {
-        ...(options.body ? { "Content-Type": "application/json" } : {}),
-        ...options.headers
+        ...(options.headers || {}),
+        ...(options.body ? { "Content-Type": "application/json" } : {})
       }
     });
+  } catch {
+    throw new Error(
+      "Cannot connect to Render. Check the backend deployment and CORS settings."
+    );
+  }
 
-    // Handle empty bodies and non-JSON server errors safely.
-    const text = await response.text();
-    let payload = {};
+  const text = await response.text();
+  let payload = {};
 
-    if (text.trim()) {
-      try {
-        payload = JSON.parse(text);
-      } catch {
-        throw new Error(
-          `Server returned a non-JSON response (HTTP ${response.status}).`
-        );
-      }
-    }
-
-    if (!response.ok) {
+  if (text.trim()) {
+    try {
+      payload = JSON.parse(text);
+    } catch {
       throw new Error(
-        payload.error || payload.message || `Request failed (HTTP ${response.status}).`
+        `The server returned an invalid response (HTTP ${response.status}).`
       );
     }
-
-    return payload;
   }
 
-  function showLogin(message = "") {
-    loginPanel.hidden = false;
-    adminContent.hidden = true;
-    loginMessage.textContent = message;
+  if (!response.ok) {
+    throw new Error(
+      payload.error ||
+      payload.message ||
+      `Request failed (HTTP ${response.status}).`
+    );
   }
 
-  function showAdmin() {
-    loginPanel.hidden = true;
-    adminContent.hidden = false;
-    loadResponses();
-  }
+  return payload;
+}
 
-  function addDetail(container, label, value, className = "") {
-    const wrapper = document.createElement("div");
-    if (className) wrapper.className = className;
+function showLogin(message = "") {
+  loginPanel.hidden = false;
+  adminContent.hidden = true;
+  loginMessage.textContent = message;
+}
 
-    const term = document.createElement("dt");
-    term.textContent = label;
+function showDashboard() {
+  loginPanel.hidden = true;
+  adminContent.hidden = false;
+  loadResponses();
+}
 
-    const description = document.createElement("dd");
-    description.textContent =
-      value === null || value === undefined || value === "" ? "—" : String(value);
+function setStatus(message = "") {
+  statusMessage.textContent = message;
+}
 
-    wrapper.append(term, description);
-    container.append(wrapper);
-  }
+function addDetail(container, label, value, className = "") {
+  const wrapper = document.createElement("div");
 
-  function render() {
-    list.replaceChildren();
+  if (className) wrapper.className = className;
 
-    const branch = branchFilter.value;
-    const semester = semesterFilter.value;
-    const roll = rollFilter.value.trim().toLowerCase();
+  const term = document.createElement("dt");
+  term.textContent = label;
 
-    const filtered = records.filter((record) =>
+  const description = document.createElement("dd");
+  description.textContent =
+    value === undefined || value === null || value === ""
+      ? "—"
+      : String(value);
+
+  wrapper.append(term, description);
+  container.append(wrapper);
+}
+
+function getFilteredRecords() {
+  const branch = branchFilter.value;
+  const semester = semesterFilter.value;
+  const roll = rollFilter.value.trim().toLowerCase();
+
+  return records
+    .filter((record) =>
       (!branch || record.branch === branch) &&
       (!semester || String(record.semester) === semester) &&
       (!roll || String(record.rollNumber || "").toLowerCase().includes(roll))
-    ).sort((a, b) =>
+    )
+    .sort((a, b) =>
       String(a.branch || "").localeCompare(String(b.branch || "")) ||
       Number(a.semester || 0) - Number(b.semester || 0) ||
       String(a.rollNumber || "").localeCompare(String(b.rollNumber || ""))
     );
+}
 
-    count.textContent =
-      `${filtered.length} of ${records.length} response${records.length === 1 ? "" : "s"}`;
+function render() {
+  responseList.replaceChildren();
 
-    if (!filtered.length) {
-      const empty = document.createElement("div");
-      empty.className = "empty";
-      empty.textContent = records.length
-        ? "No responses match these filters."
-        : "No feedback has been submitted yet.";
-      list.append(empty);
-      return;
-    }
+  const filtered = getFilteredRecords();
 
-    const groups = new Map();
+  count.textContent =
+    `${filtered.length} of ${records.length} feedback response(s)`;
 
-    for (const record of filtered) {
-      const key = `${record.branch || "Unknown branch"} · Semester ${record.semester || "—"}`;
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push(record);
-    }
+  if (!filtered.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = records.length
+      ? "No feedback matches the selected filters."
+      : "No feedback has been submitted yet.";
 
-    for (const [groupName, groupRecords] of groups) {
-      const group = document.createElement("section");
-      group.className = "group";
+    responseList.append(empty);
+    return;
+  }
 
-      const title = document.createElement("h2");
-      title.className = "group-title";
-      title.textContent = `${groupName} · ${groupRecords.length} response${groupRecords.length === 1 ? "" : "s"}`;
-      group.append(title);
+  const groups = new Map();
 
-      for (const record of groupRecords) {
-        const article = document.createElement("article");
-        article.className = "response";
+  for (const record of filtered) {
+    const key = `${record.branch || "Unknown branch"} · Semester ${record.semester || "—"}`;
 
-        const heading = document.createElement("div");
-        heading.className = "response-head";
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(record);
+  }
 
-        const student = document.createElement("div");
-        const name = document.createElement("h3");
-        name.textContent = record.studentName || "Unnamed student";
+  for (const [groupName, groupRecords] of groups) {
+    const group = document.createElement("section");
+    group.className = "group";
 
-        const date = document.createElement("p");
-        date.className = "date";
-        date.textContent = record.submittedAt
-          ? new Date(record.submittedAt).toLocaleString()
+    const title = document.createElement("h2");
+    title.className = "group-title";
+    title.textContent = `${groupName} · ${groupRecords.length} response(s)`;
+
+    group.append(title);
+
+    for (const record of groupRecords) {
+      const article = document.createElement("article");
+      article.className = "response";
+
+      const heading = document.createElement("div");
+      heading.className = "response-head";
+
+      const student = document.createElement("div");
+      const name = document.createElement("h2");
+      name.textContent = record.studentName || "Unnamed student";
+
+      const date = document.createElement("p");
+      date.className = "date";
+
+      const parsedDate = record.submittedAt
+        ? new Date(record.submittedAt)
+        : null;
+
+      date.textContent =
+        parsedDate && !Number.isNaN(parsedDate.getTime())
+          ? parsedDate.toLocaleString()
           : "Submission time unavailable";
 
-        student.append(name, date);
+      student.append(name, date);
 
-        const actions = document.createElement("div");
-        actions.className = "response-actions";
+      const actions = document.createElement("div");
+      actions.className = "response-actions no-print";
 
-        const printButton = document.createElement("button");
-        printButton.type = "button";
-        printButton.className = "secondary";
-        printButton.textContent = "Print response";
-        printButton.addEventListener("click", () => {
-          window.print();
-        });
-
-        const removeButton = document.createElement("button");
-        removeButton.type = "button";
-        removeButton.className = "danger";
-        removeButton.textContent = "Delete";
-
-        removeButton.addEventListener("click", async () => {
-          if (!record.id) {
-            statusMessage.textContent = "This response has no ID; it cannot be deleted individually.";
-            return;
-          }
-
-          if (!confirm(`Permanently delete the response from ${record.studentName || "this student"}?`)) {
-            return;
-          }
-
-          try {
-            await api(`/api/responses/${encodeURIComponent(record.id)}`, {
-              method: "DELETE"
-            });
-            await loadResponses();
-            statusMessage.textContent = "Response deleted.";
-          } catch (error) {
-            statusMessage.textContent = error.message;
-          }
-        });
-
-        actions.append(printButton, removeButton);
-        heading.append(student, actions);
-
-        const details = document.createElement("dl");
-        addDetail(details, "Branch", record.branch);
-        addDetail(details, "Semester", record.semester);
-        const years = { "1": "1st year", "2": "2nd year", "3": "3rd year" };
-        addDetail(details, "College year", years[String(record.collegeYear)] || record.collegeYear);
-        addDetail(details, "Email", record.email);
-        addDetail(details, "Date of birth", record.dob);
-        addDetail(details, "Roll number", record.rollNumber);
-
-        if (record.ratings && typeof record.ratings === "object") {
-          for (const [topic, rating] of Object.entries(record.ratings)) {
-            const numericRating = Number(rating);
-            const safeRating = Number.isFinite(numericRating)
-              ? Math.max(0, Math.min(5, Math.round(numericRating)))
-              : 0;
-            addDetail(
-              details,
-              topic,
-              `${"★".repeat(safeRating)} ${rating} / 5`,
-              `rating-${safeRating}`
-            );
-          }
-        }
-
-        if (record.feedback) {
-          addDetail(details, "Previous feedback", record.feedback, "feedback");
-        }
-
-        article.append(heading, details);
-        group.append(article);
-      }
-
-      list.append(group);
-    }
-  }
-
-  async function loadResponses() {
-    statusMessage.textContent = "";
-    count.textContent = "Loading responses…";
-
-    try {
-      const data = await api("/api/responses");
-
-      if (!Array.isArray(data)) {
-        throw new Error("Unexpected response format: expected a list of feedback responses.");
-      }
-
-      records = data.sort((a, b) =>
-        new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0)
-      );
-
-      render();
-    } catch (error) {
-      count.textContent = "Could not load responses";
-
-      if (/401|403|sign in|unauthor/i.test(error.message)) {
-        showLogin("Your session may have expired. Please sign in again.");
-      } else {
-        statusMessage.textContent =
-          `${error.message} Check that the Render backend is running and its routes are correct.`;
-      }
-    }
-  }
-
-  loginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (busy) return;
-
-    busy = true;
-    loginButton.disabled = true;
-    loginButton.textContent = "Signing in…";
-    loginMessage.textContent = "";
-
-    try {
-      const credentials = {
-        username: loginForm.elements.username.value.trim(),
-        password: loginForm.elements.password.value
-      };
-
-      await api("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify(credentials)
+      const printButton = document.createElement("button");
+      printButton.className = "secondary";
+      printButton.textContent = "Print response";
+      printButton.addEventListener("click", () => {
+        window.print();
       });
 
-      loginForm.reset();
-      showAdmin();
-    } catch (error) {
-      loginMessage.textContent = error.message;
-    } finally {
-      busy = false;
-      loginButton.disabled = false;
-      loginButton.textContent = "Sign in";
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "danger";
+      deleteButton.textContent = "Delete";
+
+      deleteButton.addEventListener("click", async () => {
+        if (!confirm(`Delete feedback from ${record.studentName || "this student"}?`)) {
+          return;
+        }
+
+        try {
+          await api(
+            `/api/responses/${encodeURIComponent(record.id)}`,
+            { method: "DELETE" }
+          );
+
+          await loadResponses();
+          setStatus("Feedback response deleted.");
+        } catch (error) {
+          setStatus(error.message);
+        }
+      });
+
+      actions.append(printButton, deleteButton);
+      heading.append(student, actions);
+
+      const details = document.createElement("dl");
+
+      addDetail(details, "Branch", record.branch);
+      addDetail(details, "Semester", record.semester);
+      addDetail(details, "College year", record.collegeYear);
+      addDetail(details, "Email", record.email);
+      addDetail(details, "Date of birth", record.dob);
+      addDetail(details, "Roll number", record.rollNumber);
+
+      if (record.ratings && typeof record.ratings === "object") {
+        for (const [topic, rating] of Object.entries(record.ratings)) {
+          const numericRating = Number(rating);
+          const stars =
+            Number.isInteger(numericRating) &&
+            numericRating >= 1 &&
+            numericRating <= 5
+              ? "★".repeat(numericRating)
+              : "";
+
+          addDetail(
+            details,
+            topic,
+            stars ? `${stars} ${numericRating}/5` : rating
+          );
+        }
+      }
+
+      if (record.feedback) {
+        addDetail(details, "Additional feedback", record.feedback, "wide");
+      }
+
+      article.append(heading, details);
+      group.append(article);
     }
-  });
 
-  $("refresh").addEventListener("click", loadResponses);
+    responseList.append(group);
+  }
+}
 
-  $("logout").addEventListener("click", async () => {
-    try {
-      await api("/api/auth/logout", { method: "POST" });
+async function loadResponses() {
+  if (busy) return;
+
+  setStatus("Loading feedback...");
+  busy = true;
+  $("refresh").disabled = true;
+
+  try {
+    const result = await api("/api/responses");
+
+    if (!Array.isArray(result)) {
+      throw new Error("The server did not return a feedback list.");
+    }
+
+    records = result;
+    render();
+    setStatus("");
+  } catch (error) {
+    if (error.message.toLowerCase().includes("sign in")) {
       records = [];
-      list.replaceChildren();
-      showLogin("You are signed out.");
-    } catch (error) {
-      statusMessage.textContent = error.message;
+      render();
+      showLogin("Your admin session has expired. Please sign in again.");
+    } else {
+      setStatus(error.message);
     }
-  });
+  } finally {
+    busy = false;
+    $("refresh").disabled = false;
+  }
+}
 
-  $("exportPdf").addEventListener("click", () => {
-    if (!records.length) {
-      statusMessage.textContent = "There are no responses to print.";
-      return;
+/* ADMIN LOGIN */
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const button = $("loginButton");
+  button.disabled = true;
+  button.textContent = "Signing in...";
+  loginMessage.textContent = "";
+
+  try {
+    await api("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        username: loginForm.elements.username.value.trim(),
+        password: loginForm.elements.password.value
+      })
+    });
+
+    loginForm.reset();
+    showDashboard();
+  } catch (error) {
+    loginMessage.textContent = error.message;
+  } finally {
+    button.disabled = false;
+    button.textContent = "Sign In";
+  }
+});
+
+/* LOG OUT */
+$("logout").addEventListener("click", async () => {
+  try {
+    await api("/api/auth/logout", { method: "POST" });
+
+    records = [];
+    render();
+    showLogin("You have signed out.");
+  } catch (error) {
+    setStatus(error.message);
+  }
+});
+
+/* FILTERS */
+branchFilter.addEventListener("change", render);
+semesterFilter.addEventListener("change", render);
+rollFilter.addEventListener("input", render);
+
+/* REFRESH */
+$("refresh").addEventListener("click", loadResponses);
+
+/* EXPORT FILTERED RESPONSES AS CSV */
+$("exportCsv").addEventListener("click", () => {
+  const filtered = getFilteredRecords();
+
+  if (!filtered.length) {
+    setStatus("There are no matching responses to export.");
+    return;
+  }
+
+  const topics = [
+    "Classroom cleanliness",
+    "Computer lab facilities",
+    "Library resources",
+    "Internet connectivity",
+    "Drinking water and washrooms",
+    "Canteen facilities",
+    "Overall College Experience",
+    "Overall satisfaction rating",
+    "Academic support",
+    "Campus environment",
+    "Extracurricular activities",
+    "Student-teacher interaction"
+  ];
+
+  const columns = [
+    "Student name", "Branch", "Semester", "College year",
+    "Email", "Date of birth", "Roll number",
+    ...topics, "Submitted at"
+  ];
+
+  const rows = filtered.map((record) => [
+    record.studentName,
+    record.branch,
+    record.semester,
+    record.collegeYear,
+    record.email,
+    record.dob,
+    record.rollNumber,
+    ...topics.map((topic) => record.ratings?.[topic] ?? ""),
+    record.submittedAt
+  ]);
+
+  const cell = (value) =>
+    `"${String(value ?? "").replace(/"/g, '""')}"`;
+
+  const csv = [columns, ...rows]
+    .map((row) => row.map(cell).join(","))
+    .join("\r\n");
+
+  const url = URL.createObjectURL(
+    new Blob(["\uFEFF" + csv], {
+      type: "text/csv;charset=utf-8"
+    })
+  );
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "college-feedback.csv";
+  document.body.append(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setStatus("CSV export created.");
+});
+
+/* PRINT OR SAVE AS PDF */
+$("printAll").addEventListener("click", () => {
+  if (!getFilteredRecords().length) {
+    setStatus("There are no matching responses to print.");
+    return;
+  }
+
+  window.print();
+});
+
+/* DELETE ALL FEEDBACK */
+$("deleteAll").addEventListener("click", async () => {
+  if (!records.length) {
+    setStatus("There are no responses to delete.");
+    return;
+  }
+
+  const confirmed = confirm(
+    "Permanently delete ALL saved feedback responses? This cannot be undone."
+  );
+
+  if (!confirmed) return;
+
+  try {
+    await api("/api/responses", { method: "DELETE" });
+    records = [];
+    render();
+    setStatus("All feedback responses were deleted.");
+  } catch (error) {
+    setStatus(error.message);
+  }
+});
+
+/* CHECK EXISTING ADMIN SESSION */
+async function initialize() {
+  try {
+    const session = await api("/api/auth");
+
+    if (session.authenticated) {
+      showDashboard();
+    } else {
+      showLogin();
     }
-    window.print();
-  });
+  } catch (error) {
+    showLogin(error.message);
+  }
+}
 
-  $("export").addEventListener("click", () => {
-    if (!records.length) {
-      statusMessage.textContent = "There are no responses to export.";
-      return;
-    }
-
-    const topics = [...new Set(records.flatMap((record) =>
-      Object.keys(record.ratings || {})
-    ))];
-
-    const columns = [
-      "Student name", "Branch", "Semester", "College year",
-      "Email", "Date of birth", "Roll number",
-      ...topics, "Previous feedback", "Submitted at"
-    ];
-
-    const rows = records.map((record) => [
-      record.studentName,
-      record.branch,
-      record.semester,
-      record.collegeYear,
-      record.email,
-      record.dob,
-      record.rollNumber,
-      ...topics.map((topic) => record.ratings?.[topic] ?? ""),
-      record.feedback || "",
-      record.submittedAt || ""
-    ]);
-
-    const cell = (value) =>
-      `"${String(value ?? "").replace(/"/g, '""')}"`;
-
-    const csv = [columns, ...rows]
-      .map((row) => row.map(cell).join(","))
-      .join("\r\n");
-
-    const url = URL.createObjectURL(
-      new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" })
-    );
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "student-feedback.csv";
-    document.body.append(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  });
-
-  branchFilter.addEventListener("change", render);
-  semesterFilter.addEventListener("change", render);
-  rollFilter.addEventListener("input", render);
-
-  $("deleteAll").addEventListener("click", async () => {
-    if (!records.length) {
-      statusMessage.textContent = "There are no responses to delete.";
-      return;
-    }
-
-    if (!confirm("Permanently delete ALL feedback responses? This cannot be undone.")) {
-      return;
-    }
-
-    const confirmation = prompt('Type DELETE to confirm removing all feedback:');
-    if (confirmation !== "DELETE") {
-      statusMessage.textContent = "Bulk deletion cancelled.";
-      return;
-    }
-
-    try {
-      await api("/api/responses", { method: "DELETE" });
-      await loadResponses();
-      statusMessage.textContent = "All feedback responses have been deleted.";
-    } catch (error) {
-      statusMessage.textContent = error.message;
-    }
-  });
-
-  // Check whether an admin session already exists.
-  (async function initialize() {
-    try {
-      const session = await api("/api/auth");
-      if (session.authenticated) showAdmin();
-      else showLogin();
-    } catch (error) {
-      showLogin(
-        `Cannot reach the backend: ${error.message} Check your Render deployment and CORS settings.`
-      );
-    }
-  })();
+initialize();
 </script>
 </body>
 </html>
