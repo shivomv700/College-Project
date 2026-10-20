@@ -1,513 +1,516 @@
 
-const http = require('node:http');
-const fs = require('node:fs/promises');
-const path = require('node:path');
-const { randomUUID, randomBytes } = require('node:crypto');
+"use strict";
 
-const HOST = '0.0.0.0';
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
+const crypto = require("crypto");
+
+// ---------- Configuration ----------
+
 const PORT = Number(process.env.PORT) || 3000;
+const HOST = "0.0.0.0";
 
-const ROOT = __dirname;
-const DATA_FILE = path.join(ROOT, 'responses.json');
-const MAX_BODY_BYTES = 20_000;
+const ALLOWED_ORIGIN =
+  "https://garhishyampurfeedbackform.netlify.app";
 
-const FRONTEND_ORIGIN =
-  'https://garhishyampurfeedbackform.netlify.app';
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "Admin";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Admin";
 
-const ADMIN_USERNAME = 'Admin';
-const ADMIN_PASSWORD = 'Admin';
+const DATA_FILE = path.join(__dirname, "responses.json");
 
-const SESSION_LIFETIME_MS = 8 * 60 * 60 * 1000;
+const SESSION_COOKIE = "feedback_admin_session";
+const SESSION_DURATION = 8 * 60 * 60 * 1000; // 8 hours
+const MAX_BODY_SIZE = 1024 * 1024; // 1 MB
 
-const validBranches = new Set([
-  'Computer Science Engineering',
-  'Civil Engineering',
-  'Electrical Engineering'
-]);
-
-const ratingTopics = [
-  'Classroom cleanliness',
-  'Computer lab facilities',
-  'Library resources',
-  'Internet connectivity',
-  'Drinking water and washrooms',
-  'Canteen facilities',
-  'Overall College Experience',
-  'Overall satisfaction rating',
-  'Academic support',
-  'Campus environment',
-  'Extracurricular activities',
-  'Student-teacher interaction'
-];
-
+// In-memory sessions. Sessions are cleared when the server restarts.
 const sessions = new Map();
-let mutations = Promise.resolve();
 
-function serializeMutation(work) {
-  const result = mutations.then(work, work);
-  mutations = result.catch(() => {});
-  return result;
+// ---------- JSON and response helpers ----------
+
+function sendJSON(res, statusCode, data) {
+  res.writeHead(statusCode, {
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store"
+  });
+
+  res.end(JSON.stringify(data));
 }
 
-async function readResponses() {
+function sendText(res, statusCode, message) {
+  res.writeHead(statusCode, {
+    "Content-Type": "text/plain; charset=utf-8",
+    "Cache-Control": "no-store"
+  });
+
+  res.end(message);
+}
+
+// ---------- CORS ----------
+
+function applyCors(req, res) {
+  const origin = req.headers.origin;
+
+  if (origin && origin !== ALLOWED_ORIGIN) {
+    return false;
+  }
+
+  if (origin === ALLOWED_ORIGIN) {
+    res.setHeader("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, DELETE, OPTIONS"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type"
+    );
+    res.setHeader("Vary", "Origin");
+  }
+
+  return true;
+}
+
+// ---------- Request body ----------
+
+function readJSON(req) {
+  return new Promise((resolve, reject) => {
+    let body = "";
+    let tooLarge = false;
+
+    req.on("data", chunk => {
+      if (tooLarge) return;
+
+      body += chunk.toString();
+
+      if (Buffer.byteLength(body, "utf8") > MAX_BODY_SIZE) {
+        tooLarge = true;
+        reject(new Error("BODY_TOO_LARGE"));
+        req.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      if (tooLarge) return;
+
+      if (!body.trim()) {
+        resolve({});
+        return;
+      }
+
+      try {
+        resolve(JSON.parse(body));
+      } catch {
+        reject(new Error("INVALID_JSON"));
+      }
+    });
+
+    req.on("error", reject);
+  });
+}
+
+// ---------- Response storage ----------
+
+function readResponses() {
   try {
-    const contents = await fs.readFile(DATA_FILE, 'utf8');
-    const data = JSON.parse(contents);
-    return Array.isArray(data) ? data : [];
+    if (!fs.existsSync(DATA_FILE)) {
+      fs.writeFileSync(DATA_FILE, "[]", "utf8");
+    }
+
+    const contents = fs.readFileSync(DATA_FILE, "utf8");
+    const responses = JSON.parse(contents || "[]");
+
+    if (!Array.isArray(responses)) {
+      throw new Error("Response data must be an array.");
+    }
+
+    return responses;
   } catch (error) {
-    if (error.code === 'ENOENT') return [];
+    console.error("Could not read responses.json:", error.message);
     throw error;
   }
 }
 
-async function writeResponses(responses) {
-  await fs.writeFile(
-    DATA_FILE,
-    JSON.stringify(responses, null, 2) + '\n',
-    'utf8'
+function saveResponses(responses) {
+  const temporaryFile = DATA_FILE + ".tmp";
+
+  fs.writeFileSync(
+    temporaryFile,
+    JSON.stringify(responses, null, 2),
+    "utf8"
   );
+
+  fs.renameSync(temporaryFile, DATA_FILE);
 }
 
-function sendJson(response, statusCode, payload) {
-  response.writeHead(statusCode, {
-    'Content-Type': 'application/json; charset=utf-8',
-    'Cache-Control': 'no-store',
-    'X-Content-Type-Options': 'nosniff'
-  });
+// ---------- Session management ----------
 
-  response.end(JSON.stringify(payload));
-}
+function getCookie(req, cookieName) {
+  const cookieHeader = req.headers.cookie || "";
 
-function setCorsHeaders(request, response) {
-  const origin = request.headers.origin;
+  for (const part of cookieHeader.split(";")) {
+    const separator = part.indexOf("=");
 
-  if (origin === FRONTEND_ORIGIN) {
-    response.setHeader('Access-Control-Allow-Origin', origin);
-    response.setHeader('Access-Control-Allow-Credentials', 'true');
-    response.setHeader(
-      'Access-Control-Allow-Methods',
-      'GET, POST, DELETE, OPTIONS'
-    );
-    response.setHeader(
-      'Access-Control-Allow-Headers',
-      'Content-Type'
-    );
-    response.setHeader('Vary', 'Origin');
+    if (separator === -1) continue;
+
+    const name = part.slice(0, separator).trim();
+    const value = part.slice(separator + 1).trim();
+
+    if (name === cookieName) {
+      return value;
+    }
   }
+
+  return null;
 }
 
-function getSessionId(request) {
-  const cookies = request.headers.cookie || '';
+function getAuthenticatedSession(req) {
+  const token = getCookie(req, SESSION_COOKIE);
 
-  const cookie = cookies
-    .split(';')
-    .map(item => item.trim())
-    .find(item => item.startsWith('feedback_admin_session='));
+  if (!token) return false;
 
-  if (!cookie) return '';
+  const expiresAt = sessions.get(token);
 
-  try {
-    return decodeURIComponent(
-      cookie.slice('feedback_admin_session='.length)
-    );
-  } catch {
-    return '';
-  }
-}
-
-function isAdminAuthenticated(request) {
-  const sessionId = getSessionId(request);
-  const expiresAt = sessions.get(sessionId);
-
-  if (!expiresAt) return false;
-
-  if (expiresAt <= Date.now()) {
-    sessions.delete(sessionId);
+  if (!expiresAt || expiresAt < Date.now()) {
+    sessions.delete(token);
     return false;
   }
 
   return true;
 }
 
-function requireAdmin(request, response) {
-  if (isAdminAuthenticated(request)) return true;
-
-  sendJson(response, 401, {
-    error: 'Please sign in as admin to manage responses.'
-  });
-
-  return false;
-}
-
-function readRequestBody(request) {
-  return new Promise((resolve, reject) => {
-    let body = '';
-    let size = 0;
-    let finished = false;
-
-    request.on('data', chunk => {
-      if (finished) return;
-
-      size += chunk.length;
-
-      if (size > MAX_BODY_BYTES) {
-        finished = true;
-        reject(new Error('Request is too large.'));
-        request.resume();
-        return;
-      }
-
-      body += chunk.toString('utf8');
-    });
-
-    request.on('end', () => {
-      if (finished) return;
-
-      try {
-        resolve(JSON.parse(body));
-      } catch {
-        reject(new Error('Request must contain valid JSON.'));
-      }
-    });
-
-    request.on('error', error => {
-      if (!finished) reject(error);
-    });
-  });
-}
-
-function validateResponse(data) {
-  if (!data || typeof data !== 'object' || Array.isArray(data)) {
-    return 'Invalid feedback data.';
-  }
-
-  const requiredText = [
-    'studentName',
-    'email',
-    'dob',
-    'rollNumber'
-  ];
-
-  if (
-    requiredText.some(
-      key =>
-        typeof data[key] !== 'string' ||
-        !data[key].trim()
-    )
-  ) {
-    return 'Please complete every required field.';
-  }
-
-  if (data.studentName.trim().length > 120) {
-    return 'The name is too long.';
-  }
-
-  if (
-    !data.ratings ||
-    typeof data.ratings !== 'object' ||
-    Array.isArray(data.ratings) ||
-    ratingTopics.some(
-      topic =>
-        !Number.isInteger(data.ratings[topic]) ||
-        data.ratings[topic] < 1 ||
-        data.ratings[topic] > 5
-    )
-  ) {
-    return 'Please provide a rating from 1 to 5 for every feedback item.';
-  }
-
-  if (
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())
-  ) {
-    return 'Enter a valid email address.';
-  }
-
-  if (!/^\d{11}$/.test(data.rollNumber)) {
-    return 'Roll number must contain exactly 11 digits.';
-  }
-
-  if (!validBranches.has(data.branch)) {
-    return 'Choose a valid branch.';
-  }
-
-  if (!['1', '2', '3', '4', '5', '6'].includes(String(data.semester))) {
-    return 'Choose a valid semester.';
-  }
-
-  if (!['1st year', '2nd year', '3rd year'].includes(data.collegeYear)) {
-    return 'Choose a valid college year.';
-  }
-
-  const dob = data.dob;
-  const parsedDob = new Date(`${dob}T00:00:00.000Z`);
-
-  if (
-    !/^\d{4}-\d{2}-\d{2}$/.test(dob) ||
-    Number.isNaN(parsedDob.valueOf()) ||
-    parsedDob.toISOString().slice(0, 10) !== dob
-  ) {
-    return 'Enter a valid date of birth.';
-  }
-
-  if (dob > new Date().toISOString().slice(0, 10)) {
-    return 'Date of birth cannot be in the future.';
-  }
-
-  return null;
-}
-
-function sendSessionCookie(response, sessionId, maxAge) {
-  response.setHeader(
-    'Set-Cookie',
-    `feedback_admin_session=${encodeURIComponent(sessionId)}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=${maxAge}`
+function setSessionCookie(res, token) {
+  res.setHeader(
+    "Set-Cookie",
+    `${SESSION_COOKIE}=${token}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=${SESSION_DURATION / 1000}`
   );
 }
 
-async function serveFile(response, fileName, contentType) {
-  try {
-    const contents = await fs.readFile(path.join(ROOT, fileName));
-
-    response.writeHead(200, {
-      'Content-Type': contentType,
-      'Cache-Control': 'no-store',
-      'X-Content-Type-Options': 'nosniff'
-    });
-
-    response.end(contents);
-  } catch {
-    sendJson(response, 404, { error: 'Page not found.' });
-  }
+function clearSessionCookie(res) {
+  res.setHeader(
+    "Set-Cookie",
+    `${SESSION_COOKIE}=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0`
+  );
 }
 
-const server = http.createServer(async (request, response) => {
-  setCorsHeaders(request, response);
-
-  const origin = request.headers.origin;
-
-  if (origin && origin !== FRONTEND_ORIGIN) {
-    return sendJson(response, 403, {
-      error: 'Origin not allowed.'
+function requireAdmin(req, res) {
+  if (!getAuthenticatedSession(req)) {
+    sendJSON(res, 401, {
+      error: "Unauthorized. Please log in again."
     });
+
+    return false;
   }
 
-  if (request.method === 'OPTIONS') {
-    if (origin !== FRONTEND_ORIGIN) {
-      return sendJson(response, 403, {
-        error: 'Origin not allowed.'
-      });
-    }
+  return true;
+}
 
-    response.writeHead(204);
-    return response.end();
-  }
+// ---------- Static admin page ----------
 
-  let pathname;
+function serveAdminPage(res) {
+  const filePath = path.join(__dirname, "admin.html");
 
-  try {
-    pathname = decodeURIComponent(
-      new URL(request.url, 'http://localhost').pathname
-    );
-  } catch {
-    return sendJson(response, 400, { error: 'Invalid URL.' });
-  }
-
-  try {
-    // Check admin login status
-    if (pathname === '/api/auth' && request.method === 'GET') {
-      return sendJson(response, 200, {
-        authenticated: isAdminAuthenticated(request)
-      });
-    }
-
-    // Admin login
-    if (pathname === '/api/auth/login' && request.method === 'POST') {
-      const credentials = await readRequestBody(request);
-
-      if (
-        !credentials ||
-        credentials.username !== ADMIN_USERNAME ||
-        credentials.password !== ADMIN_PASSWORD
-      ) {
-        return sendJson(response, 401, {
-          error: 'Incorrect username or password.'
-        });
-      }
-
-      const sessionId = randomBytes(32).toString('hex');
-
-      sessions.set(
-        sessionId,
-        Date.now() + SESSION_LIFETIME_MS
-      );
-
-      sendSessionCookie(
-        response,
-        sessionId,
-        SESSION_LIFETIME_MS / 1000
-      );
-
-      return sendJson(response, 200, {
-        authenticated: true
-      });
-    }
-
-    // Admin logout
-    if (pathname === '/api/auth/logout' && request.method === 'POST') {
-      sessions.delete(getSessionId(request));
-
-      sendSessionCookie(response, '', 0);
-
-      return sendJson(response, 200, {
-        authenticated: false
-      });
-    }
-
-    // Retrieve all feedback (admin only)
-    if (pathname === '/api/responses' && request.method === 'GET') {
-      if (!requireAdmin(request, response)) return;
-
-      return sendJson(response, 200, await readResponses());
-    }
-
-    // Retrieve one feedback record (admin only)
-    const responseMatch = pathname.match(
-      /^\/api\/responses\/([0-9a-f-]+)$/i
+  if (!fs.existsSync(filePath)) {
+    sendText(
+      res,
+      404,
+      "admin.html was not found on the backend. Open the Netlify admin page instead."
     );
 
-    if (responseMatch && request.method === 'GET') {
-      if (!requireAdmin(request, response)) return;
+    return;
+  }
 
-      const record = (await readResponses()).find(
-        item => item.id === responseMatch[1]
+  res.writeHead(200, {
+    "Content-Type": "text/html; charset=utf-8",
+    "Cache-Control": "no-store"
+  });
+
+  fs.createReadStream(filePath).pipe(res);
+}
+
+// ---------- API routes ----------
+
+async function handleRequest(req, res) {
+  // Apply CORS before processing every route, including errors.
+  if (!applyCors(req, res)) {
+    sendJSON(res, 403, {
+      error: "Origin not allowed."
+    });
+
+    return;
+  }
+
+  // Browser preflight requests must be handled before API routes.
+  if (req.method === "OPTIONS") {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  const requestURL = new URL(
+    req.url,
+    `http://${req.headers.host || "localhost"}`
+  );
+
+  const pathname = decodeURIComponent(requestURL.pathname);
+
+  // Health check
+  if (req.method === "GET" && pathname === "/api/health") {
+    sendJSON(res, 200, {
+      status: "ok",
+      message: "College feedback API is running."
+    });
+
+    return;
+  }
+
+  // Optional backend admin page
+  if (req.method === "GET" && pathname === "/admin.html") {
+    serveAdminPage(res);
+    return;
+  }
+
+  // Check whether the current session is authenticated
+  if (req.method === "GET" && pathname === "/api/auth") {
+    sendJSON(res, 200, {
+      authenticated: getAuthenticatedSession(req)
+    });
+
+    return;
+  }
+
+  // Admin login
+  if (req.method === "POST" && pathname === "/api/auth/login") {
+    let body;
+
+    try {
+      body = await readJSON(req);
+    } catch (error) {
+      sendJSON(
+        res,
+        error.message === "BODY_TOO_LARGE" ? 413 : 400,
+        {
+          error:
+            error.message === "BODY_TOO_LARGE"
+              ? "Request body is too large."
+              : "Invalid JSON request."
+        }
       );
 
-      if (!record) {
-        return sendJson(response, 404, {
-          error: 'Response not found.'
-        });
-      }
-
-      return sendJson(response, 200, record);
+      return;
     }
 
-    // Submit new feedback
-    if (pathname === '/api/responses' && request.method === 'POST') {
-      const data = await readRequestBody(request);
-      const validationError = validateResponse(data);
+    const username = String(body.username || "");
+    const password = String(body.password || "");
 
-      if (validationError) {
-        return sendJson(response, 400, {
-          error: validationError
-        });
-      }
+    if (
+      username !== ADMIN_USERNAME ||
+      password !== ADMIN_PASSWORD
+    ) {
+      sendJSON(res, 401, {
+        authenticated: false,
+        error: "Invalid username or password."
+      });
 
-      const record = {
-        id: randomUUID(),
-        studentName: data.studentName.trim(),
-        branch: data.branch,
-        semester: String(data.semester),
-        collegeYear: data.collegeYear,
-        email: data.email.trim(),
-        dob: data.dob,
-        rollNumber: data.rollNumber,
-        ratings: data.ratings,
+      return;
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+
+    sessions.set(token, Date.now() + SESSION_DURATION);
+    setSessionCookie(res, token);
+
+    sendJSON(res, 200, {
+      authenticated: true,
+      message: "Login successful."
+    });
+
+    return;
+  }
+
+  // Admin logout
+  if (req.method === "POST" && pathname === "/api/auth/logout") {
+    const token = getCookie(req, SESSION_COOKIE);
+
+    if (token) {
+      sessions.delete(token);
+    }
+
+    clearSessionCookie(res);
+
+    sendJSON(res, 200, {
+      authenticated: false,
+      message: "Logged out successfully."
+    });
+
+    return;
+  }
+
+  // List all feedback responses
+  if (req.method === "GET" && pathname === "/api/responses") {
+    if (!requireAdmin(req, res)) return;
+
+    try {
+      sendJSON(res, 200, readResponses());
+    } catch {
+      sendJSON(res, 500, {
+        error: "Could not read feedback responses."
+      });
+    }
+
+    return;
+  }
+
+  // Submit new feedback
+  if (req.method === "POST" && pathname === "/api/responses") {
+    let body;
+
+    try {
+      body = await readJSON(req);
+    } catch (error) {
+      sendJSON(
+        res,
+        error.message === "BODY_TOO_LARGE" ? 413 : 400,
+        {
+          error:
+            error.message === "BODY_TOO_LARGE"
+              ? "Feedback submission is too large."
+              : "Invalid JSON request."
+        }
+      );
+
+      return;
+    }
+
+    if (
+      !body ||
+      typeof body !== "object" ||
+      Array.isArray(body)
+    ) {
+      sendJSON(res, 400, {
+        error: "Feedback must be a JSON object."
+      });
+
+      return;
+    }
+
+    try {
+      const responses = readResponses();
+
+      const newResponse = {
+        ...body,
+        id: crypto.randomUUID(),
         submittedAt: new Date().toISOString()
       };
 
-      await serializeMutation(async () => {
-        const responses = await readResponses();
-        responses.push(record);
-        await writeResponses(responses);
+      responses.push(newResponse);
+      saveResponses(responses);
+
+      sendJSON(res, 201, {
+        success: true,
+        message: "Feedback submitted successfully.",
+        id: newResponse.id
       });
+    } catch (error) {
+      console.error("Feedback save failed:", error.message);
 
-      return sendJson(response, 201, {
-        message: 'Feedback saved.',
-        id: record.id
-      });
-    }
-
-    // Delete all feedback (admin only)
-    if (pathname === '/api/responses' && request.method === 'DELETE') {
-      if (!requireAdmin(request, response)) return;
-
-      await serializeMutation(() => writeResponses([]));
-
-      return sendJson(response, 200, {
-        message: 'All feedback was deleted.'
+      sendJSON(res, 500, {
+        error: "Could not save feedback. Please try again."
       });
     }
 
-    // Delete one feedback record (admin only)
-    const deleteMatch = pathname.match(
-      /^\/api\/responses\/([0-9a-f-]+)$/i
-    );
-
-    if (deleteMatch && request.method === 'DELETE') {
-      if (!requireAdmin(request, response)) return;
-
-      let deleted = false;
-
-      await serializeMutation(async () => {
-        const responses = await readResponses();
-
-        const remaining = responses.filter(
-          item => item.id !== deleteMatch[1]
-        );
-
-        deleted = remaining.length !== responses.length;
-
-        if (deleted) {
-          await writeResponses(remaining);
-        }
-      });
-
-      return sendJson(response, deleted ? 200 : 404, {
-        message: deleted
-          ? 'Feedback deleted.'
-          : 'Response not found.'
-      });
-    }
-
-    // Optional pages if hosted alongside server.js
-    if (request.method === 'GET') {
-      const staticFiles = {
-        '/': ['index.html', 'text/html; charset=utf-8'],
-        '/index.html': ['index.html', 'text/html; charset=utf-8'],
-        '/admin': ['admin.html', 'text/html; charset=utf-8'],
-        '/admin.html': ['admin.html', 'text/html; charset=utf-8'],
-        '/pdf-preview': ['pdf-preview.html', 'text/html; charset=utf-8'],
-        '/pdf-preview.html': ['pdf-preview.html', 'text/html; charset=utf-8'],
-        '/remark-preview': ['remark-preview.html', 'text/html; charset=utf-8'],
-        '/remark-preview.html': ['remark-preview.html', 'text/html; charset=utf-8'],
-        '/Logo.jpg': ['Logo.jpg', 'image/jpeg'],
-        '/Background.jpeg': ['Background.jpeg', 'image/jpeg']
-      };
-
-      if (staticFiles[pathname]) {
-        const [fileName, contentType] = staticFiles[pathname];
-        return serveFile(response, fileName, contentType);
-      }
-    }
-
-    return sendJson(response, 404, { error: 'Not found.' });
-  } catch (error) {
-    console.error('Request error:', error);
-
-    if (!response.headersSent) {
-      const status = error.message === 'Request is too large.' ? 413 : 400;
-
-      return sendJson(response, status, {
-        error: status === 413
-          ? 'Request is too large.'
-          : 'The request could not be processed.'
-      });
-    }
-
-    response.end();
+    return;
   }
+
+  // Delete all feedback responses
+  if (req.method === "DELETE" && pathname === "/api/responses") {
+    if (!requireAdmin(req, res)) return;
+
+    try {
+      saveResponses([]);
+
+      sendJSON(res, 200, {
+        success: true,
+        message: "All responses deleted."
+      });
+    } catch {
+      sendJSON(res, 500, {
+        error: "Could not delete responses."
+      });
+    }
+
+    return;
+  }
+
+  // Get or delete a single response by ID
+  const responseMatch = pathname.match(/^\/api\/responses\/([^/]+)$/);
+
+  if (responseMatch) {
+    if (!requireAdmin(req, res)) return;
+
+    const responseId = responseMatch[1];
+
+    try {
+      const responses = readResponses();
+      const index = responses.findIndex(
+        item => String(item.id) === responseId
+      );
+
+      if (index === -1) {
+        sendJSON(res, 404, {
+          error: "Feedback response not found."
+        });
+
+        return;
+      }
+
+      if (req.method === "GET") {
+        sendJSON(res, 200, responses[index]);
+        return;
+      }
+
+      if (req.method === "DELETE") {
+        responses.splice(index, 1);
+        saveResponses(responses);
+
+        sendJSON(res, 200, {
+          success: true,
+          message: "Response deleted successfully."
+        });
+
+        return;
+      }
+    } catch {
+      sendJSON(res, 500, {
+        error: "Could not process the response."
+      });
+
+      return;
+    }
+  }
+
+  sendJSON(res, 404, {
+    error: "API route not found."
+  });
+}
+
+// ---------- Start server ----------
+
+const server = http.createServer((req, res) => {
+  handleRequest(req, res).catch(error => {
+    console.error("Request failed:", error);
+
+    if (!res.headersSent) {
+      sendJSON(res, 500, {
+        error: "Internal server error."
+      });
+    } else if (!res.writableEnded) {
+      res.end();
+    }
+  });
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`Feedback backend listening on port ${PORT}`);
-  console.log(`Allowed frontend: ${FRONTEND_ORIGIN}`);
+  console.log(`College feedback API listening on ${HOST}:${PORT}`);
 });
