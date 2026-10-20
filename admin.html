@@ -1,296 +1,245 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#1456a0">
-  <title>Admin Dashboard | College Feedback</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1456a0">
+<title>Admin Responses | Government Polytechnic Garhi Shyampur</title>
 
-  <style>
-    :root {
-      --blue: #1456a0;
-      --dark: #103f78;
-      --ink: #18324e;
-      --muted: #647890;
-      --line: #d8e4f1;
-      --bg: #f1f6fc;
-    }
+<style>
+:root {
+  color-scheme: light;
+  --blue: #1456a0;
+  --dark: #103f78;
+  --ink: #18324e;
+  --muted: #647890;
+  --line: #d8e4f1;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
 
-    * { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 32px 18px;
+  background-color: #eaf3ff;
+  background-image:
+    linear-gradient(145deg, #eaf3ff66, #f8fbff55, #e4efff66),
+    url("./Background.jpeg");
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
 
-    body {
-      margin: 0;
-      padding: 24px 14px;
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
+main {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 30px;
+  border: 1px solid #dce8f5;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 18px 50px #1747791a;
+}
 
-    main {
-      max-width: 1100px;
-      margin: auto;
-      padding: 24px;
-      background: white;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      box-shadow: 0 12px 40px #163b6410;
-    }
+.login-panel {
+  width: min(100%, 430px);
+  margin: 8vh auto;
+  padding: 32px;
+}
+.login-brand, .brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.login-brand { margin-bottom: 24px; }
+.login-logo, .logo {
+  width: 68px;
+  height: 68px;
+  padding: 4px;
+  flex: 0 0 68px;
+  border-radius: 50%;
+  background: white;
+  object-fit: contain;
+}
+.login-brand h1 { color: var(--dark); font-size: 1.4rem; }
+.login-brand p { color: var(--muted); font-size: .9rem; }
 
-    [hidden] { display: none !important; }
+label {
+  display: block;
+  margin: 15px 0 7px;
+  font-weight: 650;
+  font-size: .9rem;
+}
+input, select {
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+}
+input:focus, select:focus {
+  outline: 3px solid #4386d21c;
+  border-color: #4386d2;
+}
+button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--blue);
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+button:hover { background: var(--dark); }
+button:disabled { opacity: .55; cursor: wait; }
+.secondary { background: #e8f1fb; color: var(--dark); }
+.secondary:hover { background: #d6e7f8; }
+.danger { background: #a8323c; }
+.danger:hover { background: #852730; }
+.login-submit { width: 100%; margin-top: 20px; }
+#loginMessage { color: #a8323c; min-height: 1.3em; }
 
-    h1, h2, p { overflow-wrap: anywhere; }
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px;
+  border-radius: 12px;
+  color: white;
+  background: linear-gradient(120deg, var(--dark), #2674c8);
+}
+.eyebrow {
+  margin: 0 0 7px;
+  color: #d8eaff;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+h1 { margin: 0; font-size: clamp(1.35rem, 4vw, 1.9rem); }
+header p:last-child { margin: 8px 0 0; }
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 22px 0 14px;
+}
+#count { color: var(--muted); }
+.actions, .response-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 17px;
+}
+.filters label { color: var(--muted); }
+#status { min-height: 1.4em; color: #8b2730; }
+#responses { display: grid; gap: 12px; }
+.group { display: grid; gap: 10px; }
+.group-title {
+  margin: 8px 0 0;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--line);
+  color: var(--dark);
+  font-size: 1.05rem;
+}
+.response { padding: 17px; border: 1px solid var(--line); border-radius: 11px; }
+.response-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 13px;
+}
+.response h2 { margin: 0; color: var(--dark); font-size: 1.05rem; }
+.date { margin: 5px 0 0; color: var(--muted); font-size: .83rem; }
+.delete-one { background: #fff0f0; color: #8b2730; }
+.print-one { background: #e8f1fb; color: var(--dark); }
+dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px 18px; margin: 0; }
+dt { color: var(--muted); font-size: .78rem; }
+dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+.feedback { grid-column: 1 / -1; }
+.rating-1 dd { color: #d94a4a; }
+.rating-2 dd { color: #ef7d32; }
+.rating-3 dd { color: #d9a915; }
+.rating-4 dd { color: #78a92e; }
+.rating-5 dd { color: #168a58; }
+.empty { padding: 30px 15px; border: 1px dashed #b9cbe0; border-radius: 10px; color: var(--muted); text-align: center; }
 
-    h1 { margin: 0; font-size: 1.7rem; }
-    h2 { font-size: 1.05rem; }
-
-    .login {
-      max-width: 430px;
-      margin: 7vh auto;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 22px;
-    }
-
-    .logo {
-      width: 64px;
-      height: 64px;
-      object-fit: contain;
-      border-radius: 50%;
-      background: white;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      margin: 6px 0 0;
-    }
-
-    label {
-      display: block;
-      margin: 16px 0 6px;
-      font-weight: 600;
-      font-size: .9rem;
-    }
-
-    input, select {
-      width: 100%;
-      min-height: 43px;
-      padding: 10px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      font: inherit;
-      background: white;
-      color: var(--ink);
-    }
-
-    input:focus, select:focus {
-      outline: 2px solid #1456a044;
-      border-color: var(--blue);
-    }
-
-    button {
-      min-height: 40px;
-      padding: 9px 13px;
-      border: 0;
-      border-radius: 8px;
-      background: var(--blue);
-      color: white;
-      font: inherit;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    button:hover { background: var(--dark); }
-    button:disabled { opacity: .6; cursor: wait; }
-
-    .full { width: 100%; margin-top: 20px; }
-
-    .secondary {
-      background: #e8f1fb;
-      color: var(--dark);
-    }
-
-    .secondary:hover { background: #d6e7f8; }
-
-    .danger { background: #a8323c; }
-    .danger:hover { background: #852730; }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 24px 0 16px;
-    }
-
-    .actions, .response-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .filters {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .filters label { margin: 0; }
-
-    #status, #loginMessage {
-      min-height: 1.4em;
-      color: #a8323c;
-      overflow-wrap: anywhere;
-    }
-
-    #count { color: var(--muted); }
-
-    .group { margin-top: 22px; }
-
-    .group-title {
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--line);
-      color: var(--dark);
-    }
-
-    .response {
-      margin: 12px 0;
-      padding: 17px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      break-inside: avoid;
-    }
-
-    .response-head {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 15px;
-    }
-
-    .response-head h2 { margin: 0; color: var(--dark); }
-
-    .date {
-      margin: 5px 0 0;
-      color: var(--muted);
-      font-size: .83rem;
-    }
-
-    .response-actions button {
-      min-height: 34px;
-      padding: 7px 10px;
-      font-size: .84rem;
-    }
-
-    dl {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 13px 18px;
-      margin: 0;
-    }
-
-    dt { color: var(--muted); font-size: .8rem; }
-    dd { margin: 4px 0 0; overflow-wrap: anywhere; }
-    .wide { grid-column: 1 / -1; }
-
-    .empty {
-      padding: 28px 14px;
-      border: 1px dashed #b9cbe0;
-      border-radius: 10px;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    .note {
-      margin-top: 24px;
-      color: var(--muted);
-      font-size: .82rem;
-    }
-
-    @media (max-width: 650px) {
-      main { padding: 16px; }
-      .filters, dl { grid-template-columns: 1fr; }
-      .wide { grid-column: auto; }
-      .toolbar { align-items: flex-start; }
-      h1 { font-size: 1.35rem; }
-    }
-
-    @media print {
-      body { padding: 0; background: white; }
-      main { max-width: none; padding: 0; border: 0; box-shadow: none; }
-      .no-print, #status, #loginPanel { display: none !important; }
-      .response { border: 1px solid #aaa; }
-    }
-  </style>
+@media (max-width: 620px) {
+  body { padding: 12px; }
+  main { padding: 16px; }
+  .filters, dl { grid-template-columns: 1fr; }
+  .response-head { flex-direction: column; }
+  .feedback { grid-column: auto; }
+  .logo, .login-logo { width: 56px; height: 56px; flex-basis: 56px; }
+}
+@media print {
+  body { padding: 0; background: white; }
+  main { width: 100%; padding: 0; border: 0; box-shadow: none; }
+  .toolbar, .filters, #status, .response-actions { display: none !important; }
+  header { print-color-adjust: exact; }
+  .response { break-inside: avoid; }
+}
+</style>
 </head>
 
 <body>
 <main>
-
-  <!-- ADMIN LOGIN -->
-  <section id="loginPanel" class="login" hidden>
-    <div class="brand">
-      <img class="logo" src="/Logo.jpg" alt="College logo">
+  <section id="loginPanel" class="login-panel" hidden>
+    <div class="login-brand">
+      <img class="login-logo" src="./Logo.jpg" alt="College logo">
       <div>
-        <h1>Admin Sign In</h1>
-        <p class="subtitle">College Feedback System</p>
+        <h1>Admin sign in</h1>
+        <p>Government Polytechnic Garhi Shyampur</p>
       </div>
     </div>
-
     <form id="loginForm">
       <label for="username">Username</label>
-      <input id="username" name="username"
-             autocomplete="username" required>
-
+      <input id="username" name="username" autocomplete="username" required>
       <label for="password">Password</label>
-      <input id="password" name="password"
-             type="password"
+      <input id="password" name="password" type="password"
              autocomplete="current-password" required>
-
-      <button id="loginButton" class="full" type="submit">
-        Sign In
-      </button>
-
+      <button class="login-submit" id="loginButton" type="submit">Sign in</button>
       <p id="loginMessage" role="status" aria-live="polite"></p>
     </form>
   </section>
 
-  <!-- ADMIN DASHBOARD -->
   <section id="adminContent" hidden>
-    <header class="brand">
-      <img class="logo" src="/Logo.jpg" alt="College logo">
-      <div>
-        <h1>Student Feedback Dashboard</h1>
-        <p class="subtitle">
-          Uttarakhand Polytechnic College · Garhi Shyampur
-        </p>
+    <header>
+      <div class="brand">
+        <img class="logo" src="./Logo.jpg" alt="College logo">
+        <div>
+          <p class="eyebrow">Uttarakhand Polytechnic College · Garhi Shyampur</p>
+          <h1>Admin · Student Feedback</h1>
+        </div>
       </div>
     </header>
 
-    <div class="toolbar no-print">
-      <p id="count">Loading feedback...</p>
-
+    <div class="toolbar">
+      <p id="count">Loading responses…</p>
       <div class="actions">
-        <button id="refresh" class="secondary">Refresh</button>
-        <button id="exportCsv" class="secondary">Export CSV</button>
-        <button id="printAll" class="secondary">Print / Save PDF</button>
-        <button id="deleteAll" class="danger">Delete All</button>
-        <button id="logout" class="secondary">Log Out</button>
+        <button class="secondary" id="refresh" type="button">Refresh</button>
+        <button class="secondary" id="export" type="button">Export CSV</button>
+        <button class="secondary" id="exportPdf" type="button">Print / Save PDF</button>
+        <button class="danger" id="deleteAll" type="button">Delete all</button>
+        <button class="secondary" id="logout" type="button">Log out</button>
       </div>
     </div>
 
-    <div class="filters no-print">
-      <label for="branchFilter">
-        Branch
+    <div class="filters">
+      <label>Branch
         <select id="branchFilter">
           <option value="">All branches</option>
           <option>Computer Science Engineering</option>
@@ -298,9 +247,7 @@
           <option>Electrical Engineering</option>
         </select>
       </label>
-
-      <label for="semesterFilter">
-        Semester
+      <label>Semester
         <select id="semesterFilter">
           <option value="">All semesters</option>
           <option value="1">Semester 1</option>
@@ -311,95 +258,74 @@
           <option value="6">Semester 6</option>
         </select>
       </label>
-
-      <label for="rollFilter">
-        Roll Number
-        <input id="rollFilter" type="search"
-               placeholder="Search roll number">
+      <label>Roll number
+        <input id="rollFilter" type="search" placeholder="Search roll number">
       </label>
     </div>
 
     <p id="status" role="status" aria-live="polite"></p>
     <section id="responses" aria-label="Feedback responses"></section>
-
-    <p class="note no-print">
-      Keep student information confidential. Only authorized staff should
-      access, export, or delete feedback records.
-    </p>
   </section>
-
 </main>
 
 <script>
 "use strict";
 
-/*
- * IMPORTANT:
- * All API calls go directly to Render, never to Netlify.
- */
 const API_BASE = "https://college-project-wdh5.onrender.com";
 
-const $ = (id) => document.getElementById(id);
-
+const $ = id => document.getElementById(id);
+const list = $("responses");
+const count = $("count");
+const statusMessage = $("status");
 const loginPanel = $("loginPanel");
 const adminContent = $("adminContent");
 const loginForm = $("loginForm");
 const loginMessage = $("loginMessage");
-const statusMessage = $("status");
-const count = $("count");
-const responseList = $("responses");
-
 const branchFilter = $("branchFilter");
 const semesterFilter = $("semesterFilter");
 const rollFilter = $("rollFilter");
 
 let records = [];
-let busy = false;
+let loading = false;
 
-/*
- * Read response text first.
- * This prevents empty responses from causing JSON parse errors.
- */
+// All requests use the Render backend and include cross-origin credentials.
 async function api(path, options = {}) {
-  let response;
+  const headers = new Headers(options.headers || {});
+  if (options.body && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
 
+  let response;
   try {
     response = await fetch(`${API_BASE}${path}`, {
       ...options,
+      headers,
       credentials: "include",
-      headers: {
-        ...(options.headers || {}),
-        ...(options.body ? { "Content-Type": "application/json" } : {})
-      }
+      cache: "no-store"
     });
   } catch {
-    throw new Error(
-      "Cannot connect to Render. Check the backend deployment and CORS settings."
-    );
+    throw new Error("Cannot reach the backend. Check the Render deployment and connection.");
   }
 
   const text = await response.text();
-  let payload = {};
+  let data = {};
 
   if (text.trim()) {
     try {
-      payload = JSON.parse(text);
+      data = JSON.parse(text);
     } catch {
-      throw new Error(
-        `The server returned an invalid response (HTTP ${response.status}).`
-      );
+      throw new Error(`The server returned a non-JSON response (HTTP ${response.status}).`);
     }
   }
 
   if (!response.ok) {
-    throw new Error(
-      payload.error ||
-      payload.message ||
-      `Request failed (HTTP ${response.status}).`
-    );
+    if (response.status === 401) {
+      throw new Error(data.error || "Your admin session is not authenticated. Please sign in again.");
+    }
+    throw new Error(data.error || data.message || `Request failed (HTTP ${response.status}).`);
   }
 
-  return payload;
+  return data;
 }
 
 function showLogin(message = "") {
@@ -408,76 +334,54 @@ function showLogin(message = "") {
   loginMessage.textContent = message;
 }
 
-function showDashboard() {
+function showAdmin() {
   loginPanel.hidden = true;
   adminContent.hidden = false;
-  loadResponses();
-}
-
-function setStatus(message = "") {
-  statusMessage.textContent = message;
 }
 
 function addDetail(container, label, value, className = "") {
   const wrapper = document.createElement("div");
-
   if (className) wrapper.className = className;
-
   const term = document.createElement("dt");
   term.textContent = label;
-
   const description = document.createElement("dd");
-  description.textContent =
-    value === undefined || value === null || value === ""
-      ? "—"
-      : String(value);
-
+  description.textContent = value == null || value === "" ? "—" : String(value);
   wrapper.append(term, description);
   container.append(wrapper);
 }
 
-function getFilteredRecords() {
+function render() {
+  list.replaceChildren();
+
   const branch = branchFilter.value;
   const semester = semesterFilter.value;
-  const roll = rollFilter.value.trim().toLowerCase();
+  const roll = rollFilter.value.trim();
 
-  return records
-    .filter((record) =>
-      (!branch || record.branch === branch) &&
-      (!semester || String(record.semester) === semester) &&
-      (!roll || String(record.rollNumber || "").toLowerCase().includes(roll))
-    )
-    .sort((a, b) =>
-      String(a.branch || "").localeCompare(String(b.branch || "")) ||
-      Number(a.semester || 0) - Number(b.semester || 0) ||
-      String(a.rollNumber || "").localeCompare(String(b.rollNumber || ""))
-    );
-}
+  const filtered = records.filter(record =>
+    (!branch || record.branch === branch) &&
+    (!semester || String(record.semester) === semester) &&
+    (!roll || String(record.rollNumber || "").includes(roll))
+  ).sort((a, b) =>
+    String(a.branch || "").localeCompare(String(b.branch || "")) ||
+    Number(a.semester || 0) - Number(b.semester || 0) ||
+    String(a.rollNumber || "").localeCompare(String(b.rollNumber || ""))
+  );
 
-function render() {
-  responseList.replaceChildren();
-
-  const filtered = getFilteredRecords();
-
-  count.textContent =
-    `${filtered.length} of ${records.length} feedback response(s)`;
+  count.textContent = `${filtered.length} of ${records.length} response${records.length === 1 ? "" : "s"}`;
 
   if (!filtered.length) {
     const empty = document.createElement("div");
     empty.className = "empty";
     empty.textContent = records.length
-      ? "No feedback matches the selected filters."
+      ? "No responses match these filters."
       : "No feedback has been submitted yet.";
-
-    responseList.append(empty);
+    list.append(empty);
     return;
   }
 
   const groups = new Map();
-
   for (const record of filtered) {
-    const key = `${record.branch || "Unknown branch"} · Semester ${record.semester || "—"}`;
-
+    const key = `${record.branch || "Unspecified branch"} · Semester ${record.semester || "—"}`;
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(record);
   }
@@ -488,8 +392,7 @@ function render() {
 
     const title = document.createElement("h2");
     title.className = "group-title";
-    title.textContent = `${groupName} · ${groupRecords.length} response(s)`;
-
+    title.textContent = `${groupName} · ${groupRecords.length} response${groupRecords.length === 1 ? "" : "s"}`;
     group.append(title);
 
     for (const record of groupRecords) {
@@ -505,134 +408,106 @@ function render() {
 
       const date = document.createElement("p");
       date.className = "date";
-
-      const parsedDate = record.submittedAt
-        ? new Date(record.submittedAt)
-        : null;
-
-      date.textContent =
-        parsedDate && !Number.isNaN(parsedDate.getTime())
-          ? parsedDate.toLocaleString()
-          : "Submission time unavailable";
+      date.textContent = record.submittedAt
+        ? new Date(record.submittedAt).toLocaleString()
+        : "Submission time unavailable";
 
       student.append(name, date);
 
       const actions = document.createElement("div");
-      actions.className = "response-actions no-print";
+      actions.className = "response-actions";
 
-      const printButton = document.createElement("button");
-      printButton.className = "secondary";
-      printButton.textContent = "Print response";
-      printButton.addEventListener("click", () => {
-        window.print();
-      });
+      const print = document.createElement("button");
+      print.className = "print-one";
+      print.type = "button";
+      print.textContent = "Print response";
+      print.addEventListener("click", () => window.print());
 
-      const deleteButton = document.createElement("button");
-      deleteButton.className = "danger";
-      deleteButton.textContent = "Delete";
-
-      deleteButton.addEventListener("click", async () => {
-        if (!confirm(`Delete feedback from ${record.studentName || "this student"}?`)) {
-          return;
-        }
-
+      const remove = document.createElement("button");
+      remove.className = "delete-one";
+      remove.type = "button";
+      remove.textContent = "Delete";
+      remove.addEventListener("click", async () => {
+        if (!confirm("Delete this feedback response?")) return;
         try {
-          await api(
-            `/api/responses/${encodeURIComponent(record.id)}`,
-            { method: "DELETE" }
-          );
-
+          await api(`/api/responses/${encodeURIComponent(record.id)}`, {
+            method: "DELETE"
+          });
           await loadResponses();
-          setStatus("Feedback response deleted.");
+          statusMessage.textContent = "Response deleted.";
         } catch (error) {
-          setStatus(error.message);
+          statusMessage.textContent = error.message;
         }
       });
 
-      actions.append(printButton, deleteButton);
+      actions.append(print, remove);
       heading.append(student, actions);
 
       const details = document.createElement("dl");
-
       addDetail(details, "Branch", record.branch);
       addDetail(details, "Semester", record.semester);
-      addDetail(details, "College year", record.collegeYear);
+      const years = { "1": "1st year", "2": "2nd year", "3": "3rd year" };
+      addDetail(details, "College year", years[String(record.collegeYear)] || record.collegeYear);
       addDetail(details, "Email", record.email);
       addDetail(details, "Date of birth", record.dob);
       addDetail(details, "Roll number", record.rollNumber);
 
       if (record.ratings && typeof record.ratings === "object") {
-        for (const [topic, rating] of Object.entries(record.ratings)) {
-          const numericRating = Number(rating);
-          const stars =
-            Number.isInteger(numericRating) &&
-            numericRating >= 1 &&
-            numericRating <= 5
-              ? "★".repeat(numericRating)
-              : "";
-
-          addDetail(
-            details,
-            topic,
-            stars ? `${stars} ${numericRating}/5` : rating
-          );
+        for (const [topic, rawRating] of Object.entries(record.ratings)) {
+          const rating = Number(rawRating);
+          const value = Number.isFinite(rating)
+            ? `${"★".repeat(Math.max(0, Math.min(5, rating)))} ${rating} / 5`
+            : String(rawRating);
+          addDetail(details, topic, value, Number.isFinite(rating) ? `rating-${rating}` : "");
         }
       }
 
       if (record.feedback) {
-        addDetail(details, "Additional feedback", record.feedback, "wide");
+        addDetail(details, "Feedback", record.feedback, "feedback");
       }
 
       article.append(heading, details);
       group.append(article);
     }
 
-    responseList.append(group);
+    list.append(group);
   }
 }
 
 async function loadResponses() {
-  if (busy) return;
-
-  setStatus("Loading feedback...");
-  busy = true;
-  $("refresh").disabled = true;
+  if (loading) return;
+  loading = true;
+  statusMessage.textContent = "";
 
   try {
-    const result = await api("/api/responses");
-
-    if (!Array.isArray(result)) {
-      throw new Error("The server did not return a feedback list.");
+    const data = await api("/api/responses");
+    if (!Array.isArray(data)) {
+      throw new Error("Unexpected response format: the server did not return a response list.");
     }
-
-    records = result;
+    records = data.sort((a, b) =>
+      new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0)
+    );
     render();
-    setStatus("");
   } catch (error) {
-    if (error.message.toLowerCase().includes("sign in")) {
-      records = [];
-      render();
-      showLogin("Your admin session has expired. Please sign in again.");
-    } else {
-      setStatus(error.message);
+    count.textContent = "Could not load responses";
+    statusMessage.textContent = error.message;
+    if (/unauthorized|sign in|session/i.test(error.message)) {
+      showLogin("Your session expired or wasn't saved. Please sign in again.");
     }
   } finally {
-    busy = false;
-    $("refresh").disabled = false;
+    loading = false;
   }
 }
 
-/* ADMIN LOGIN */
-loginForm.addEventListener("submit", async (event) => {
+loginForm.addEventListener("submit", async event => {
   event.preventDefault();
-
   const button = $("loginButton");
   button.disabled = true;
-  button.textContent = "Signing in...";
+  button.textContent = "Signing in…";
   loginMessage.textContent = "";
 
   try {
-    await api("/api/auth/login", {
+    const result = await api("/api/auth/login", {
       method: "POST",
       body: JSON.stringify({
         username: loginForm.elements.username.value.trim(),
@@ -640,152 +515,122 @@ loginForm.addEventListener("submit", async (event) => {
       })
     });
 
+    if (!result.authenticated) {
+      throw new Error("The server did not confirm authentication.");
+    }
+
+    // Verify that the cookie-backed session is actually recognized.
+    const session = await api("/api/auth");
+    if (!session.authenticated) {
+      throw new Error("Login succeeded, but the session cookie was not recognized. Check browser cookie settings and the backend Set-Cookie header.");
+    }
+
     loginForm.reset();
-    showDashboard();
+    showAdmin();
+    await loadResponses();
   } catch (error) {
-    loginMessage.textContent = error.message;
+    showLogin(error.message);
   } finally {
     button.disabled = false;
-    button.textContent = "Sign In";
+    button.textContent = "Sign in";
   }
 });
 
-/* LOG OUT */
 $("logout").addEventListener("click", async () => {
   try {
     await api("/api/auth/logout", { method: "POST" });
-
     records = [];
-    render();
+    list.replaceChildren();
     showLogin("You have signed out.");
   } catch (error) {
-    setStatus(error.message);
+    statusMessage.textContent = error.message;
   }
 });
 
-/* FILTERS */
+$("refresh").addEventListener("click", loadResponses);
 branchFilter.addEventListener("change", render);
 semesterFilter.addEventListener("change", render);
 rollFilter.addEventListener("input", render);
 
-/* REFRESH */
-$("refresh").addEventListener("click", loadResponses);
+$("deleteAll").addEventListener("click", async () => {
+  if (!records.length || !confirm("Permanently delete all saved feedback?")) return;
+  try {
+    await api("/api/responses", { method: "DELETE" });
+    await loadResponses();
+    statusMessage.textContent = "All responses deleted.";
+  } catch (error) {
+    statusMessage.textContent = error.message;
+  }
+});
 
-/* EXPORT FILTERED RESPONSES AS CSV */
-$("exportCsv").addEventListener("click", () => {
-  const filtered = getFilteredRecords();
+$("exportPdf").addEventListener("click", () => {
+  if (!records.length) {
+    statusMessage.textContent = "There are no responses to print.";
+    return;
+  }
+  window.print();
+});
 
-  if (!filtered.length) {
-    setStatus("There are no matching responses to export.");
+$("export").addEventListener("click", () => {
+  if (!records.length) {
+    statusMessage.textContent = "There are no responses to export.";
     return;
   }
 
-  const topics = [
-    "Classroom cleanliness",
-    "Computer lab facilities",
-    "Library resources",
-    "Internet connectivity",
-    "Drinking water and washrooms",
-    "Canteen facilities",
-    "Overall College Experience",
-    "Overall satisfaction rating",
-    "Academic support",
-    "Campus environment",
-    "Extracurricular activities",
-    "Student-teacher interaction"
-  ];
+  const topics = [...new Set(records.flatMap(record =>
+    Object.keys(record.ratings || {})
+  ))];
 
   const columns = [
     "Student name", "Branch", "Semester", "College year",
     "Email", "Date of birth", "Roll number",
-    ...topics, "Submitted at"
+    ...topics, "Feedback", "Submitted at"
   ];
 
-  const rows = filtered.map((record) => [
-    record.studentName,
-    record.branch,
-    record.semester,
-    record.collegeYear,
-    record.email,
-    record.dob,
+  const values = record => [
+    record.studentName, record.branch, record.semester,
+    record.collegeYear, record.email, record.dob,
     record.rollNumber,
-    ...topics.map((topic) => record.ratings?.[topic] ?? ""),
-    record.submittedAt
-  ]);
+    ...topics.map(topic => record.ratings?.[topic] ?? ""),
+    record.feedback || "", record.submittedAt
+  ];
 
-  const cell = (value) =>
-    `"${String(value ?? "").replace(/"/g, '""')}"`;
+  const cell = value => {
+    let text = String(value ?? "");
+    // Prevent spreadsheet formula execution for untrusted text.
+    if (/^[\s]*[=+\-@]/.test(text)) text = "'" + text;
+    return `"${text.replace(/"/g, '""')}"`;
+  };
 
-  const csv = [columns, ...rows]
-    .map((row) => row.map(cell).join(","))
+  const csv = [columns, ...records.map(values)]
+    .map(row => row.map(cell).join(","))
     .join("\r\n");
 
   const url = URL.createObjectURL(
-    new Blob(["\uFEFF" + csv], {
-      type: "text/csv;charset=utf-8"
-    })
+    new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" })
   );
 
   const link = document.createElement("a");
   link.href = url;
-  link.download = "college-feedback.csv";
-  document.body.append(link);
+  link.download = "student-feedback.csv";
   link.click();
-  link.remove();
-
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-  setStatus("CSV export created.");
 });
 
-/* PRINT OR SAVE AS PDF */
-$("printAll").addEventListener("click", () => {
-  if (!getFilteredRecords().length) {
-    setStatus("There are no matching responses to print.");
-    return;
-  }
-
-  window.print();
-});
-
-/* DELETE ALL FEEDBACK */
-$("deleteAll").addEventListener("click", async () => {
-  if (!records.length) {
-    setStatus("There are no responses to delete.");
-    return;
-  }
-
-  const confirmed = confirm(
-    "Permanently delete ALL saved feedback responses? This cannot be undone."
-  );
-
-  if (!confirmed) return;
-
-  try {
-    await api("/api/responses", { method: "DELETE" });
-    records = [];
-    render();
-    setStatus("All feedback responses were deleted.");
-  } catch (error) {
-    setStatus(error.message);
-  }
-});
-
-/* CHECK EXISTING ADMIN SESSION */
-async function initialize() {
+// Start by checking the existing session.
+(async function init() {
   try {
     const session = await api("/api/auth");
-
     if (session.authenticated) {
-      showDashboard();
+      showAdmin();
+      await loadResponses();
     } else {
       showLogin();
     }
   } catch (error) {
-    showLogin(error.message);
+    showLogin("Cannot verify your session: " + error.message);
   }
-}
-
-initialize();
+})();
 </script>
 </body>
 </html>
